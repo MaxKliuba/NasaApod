@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary">#9BDAF1</color>
+    <color name="color_on_primary">@color/black</color>
+    <color name="color_secondary">#9BDAF1</color>
+    <color name="color_on_secondary">@color/black</color>
+    <color name="color_action_bar">#222222</color>
+    <color name="color_status_bar">#222222</color>
+    <color name="color_background">@color/black</color>
+    <color name="color_on_background">@color/white</color>
+    <color name="color_disabled">#727272</color>
+</resources>
