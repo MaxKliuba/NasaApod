@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/apod_fragment"
-        android:name="com.android.maxclub.nasaapod.ApodFragment"
+        android:name="com.android.maxclub.nasaapod.fragments.ApodFragment"
         android:label="APOD"
         tools:layout="@layout/fragment_apod"/>
     <fragment
         android:id="@+id/favorite_list_fragment"
-        android:name="com.android.maxclub.nasaapod.FavoriteListFragment"
+        android:name="com.android.maxclub.nasaapod.fragments.FavoriteListFragment"
         android:label="Favorite List"
         tools:layout="@layout/fragment_favorite_list"/>
     <fragment
         android:id="@+id/home_view_pager_fragment"
-        android:name="com.android.maxclub.nasaapod.HomeViewPagerFragment"
+        android:name="com.android.maxclub.nasaapod.fragments.HomeViewPagerFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home_view_pager" >
         <action

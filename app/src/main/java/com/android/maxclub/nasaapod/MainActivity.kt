@@ -35,14 +35,15 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        destinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            val tabIndex = tabsFragmentId.indexOfFirst { it.contains(destination.id) }
-            binding.tabLayout.apply {
-                tag = false
-                getTabAt(tabIndex)?.select()
-                tag = true
+        destinationChangedListener =
+            NavController.OnDestinationChangedListener { _, destination, _ ->
+                val tabIndex = tabsFragmentId.indexOfFirst { it.contains(destination.id) }
+                binding.tabLayout.apply {
+                    tag = false
+                    getTabAt(tabIndex)?.select()
+                    tag = true
+                }
             }
-        }
         navController.addOnDestinationChangedListener(destinationChangedListener)
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -56,6 +57,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
+                if (binding.tabLayout.tag != false) {
+                    when (tab.position) {
+                        0 -> navController.navigate(R.id.home_view_pager_fragment)
+                        1 -> navController.navigate(R.id.favorite_list_fragment)
+                    }
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -72,10 +79,10 @@ class MainActivity : AppCompatActivity() {
         CustomTabsIntent.Builder()
             .setShowTitle(true)
             .build()
-            .launchUrl(this, Uri.parse(URL))
+            .launchUrl(this, Uri.parse(NASA_URL))
     }
 
     companion object {
-        const val URL = "https://www.nasa.gov/"
+        private const val NASA_URL = "https://www.nasa.gov/"
     }
 }
