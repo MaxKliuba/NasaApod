@@ -1,20 +1,27 @@
-package com.android.maxclub.nasaapod.viewmodel
+package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.*
-import com.android.maxclub.nasaapod.model.Apod
-import com.android.maxclub.nasaapod.repository.ApodRepository
+import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.data.ApodRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 import java.util.*
+import javax.inject.Inject
 
-class ApodViewModel(private val apodRepository: ApodRepository) : ViewModel() {
+@HiltViewModel
+class ApodViewModel @Inject constructor(
+    private val apodRepository: ApodRepository
+) : ViewModel() {
     private val _apod = MutableLiveData<Apod>()
     val apod: LiveData<Apod> = Transformations.switchMap(_apod) {
         MutableLiveData(it)
     }
+    private var fetchJob: Job? = null
 
     fun fetchApod() {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             val response = apodRepository.getApod()
             if (response.isSuccessful) {
                 _apod.postValue(response.body())
@@ -23,7 +30,8 @@ class ApodViewModel(private val apodRepository: ApodRepository) : ViewModel() {
     }
 
     fun fetchApodByDate(date: Date) {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             val response = apodRepository.getApodByDate(date)
             if (response.isSuccessful) {
                 _apod.postValue(response.body())
@@ -32,21 +40,12 @@ class ApodViewModel(private val apodRepository: ApodRepository) : ViewModel() {
     }
 
     fun fetchRandomApod() {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             val response = apodRepository.getRandomApod()
             if (response.isSuccessful) {
                 _apod.postValue(response.body()?.get(0))
             }
-        }
-    }
-}
-
-class ApodViewModelFactory(private val apodRepository: ApodRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if (modelClass.isAssignableFrom(ApodViewModel::class.java)) {
-            ApodViewModel(apodRepository) as T
-        } else {
-            throw IllegalArgumentException("ViewModel not found")
         }
     }
 }

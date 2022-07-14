@@ -1,4 +1,4 @@
-package com.android.maxclub.nasaapod.model
+package com.android.maxclub.nasaapod.data
 
 import com.google.gson.annotations.SerializedName
 import java.util.*

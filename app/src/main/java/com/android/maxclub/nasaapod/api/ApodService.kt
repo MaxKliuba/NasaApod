@@ -1,6 +1,6 @@
 package com.android.maxclub.nasaapod.api
 
-import com.android.maxclub.nasaapod.model.Apod
+import com.android.maxclub.nasaapod.data.Apod
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -22,22 +22,17 @@ interface ApodService {
         private const val BASE_URL = "https://api.nasa.gov/"
         const val API_KEY = "DG8RfuLFTDzZUWF8BDPlJR5PmIIGKjHVMN5Szc06"
 
-        var apodService: ApodService? = null
+        fun create(): ApodService {
+            val client = OkHttpClient.Builder()
+                .addInterceptor(ApodInterceptor())
+                .build()
 
-        fun getInstance(): ApodService {
-            if (apodService == null) {
-                val okHttpClient = OkHttpClient.Builder()
-                    .addInterceptor(ApodInterceptor())
-                    .build()
-
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                apodService = retrofit.create(ApodService::class.java)
-            }
-            return apodService!!
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ApodService::class.java)
         }
     }
 }

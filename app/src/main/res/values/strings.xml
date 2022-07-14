@@ -1,10 +1,12 @@
 <resources>
+    <string name="language">en</string>
+    <string name="country" />
     <string name="app_name">NASA APOD</string>
     <string name="home_tab_title">Home</string>
     <string name="favorite_tab_title">Favorite</string>
-    <string name="share_item_title">Share</string>
+    <string name="random_date_item_title">Random date</string>
     <string name="select_date_item_title">Select a date</string>
+    <string name="share_item_title">Share</string>
     <string name="date_format_pattern">MMMM dd, yyyy</string>
     <string name="copyright_placeholder">© %1$s</string>
-    <string name="random_date_item_title">Random date</string>
 </resources>

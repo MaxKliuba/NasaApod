@@ -1,4 +1,4 @@
-package com.android.maxclub.nasaapod.model
+package com.android.maxclub.nasaapod.data
 
 sealed class Resource<T>(
     val data: T? = null,

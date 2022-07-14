@@ -6,24 +6,22 @@ import androidx.fragment.app.Fragment
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.api.ApodService
 import com.android.maxclub.nasaapod.databinding.FragmentApodBinding
-import com.android.maxclub.nasaapod.model.Apod
-import com.android.maxclub.nasaapod.repository.ApodRepository
-import com.android.maxclub.nasaapod.utils.DateHelper
-import com.android.maxclub.nasaapod.viewmodel.ApodViewModel
-import com.android.maxclub.nasaapod.viewmodel.ApodViewModelFactory
+import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.utils.formatDate
+import com.android.maxclub.nasaapod.viewmodels.ApodViewModel
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class ApodFragment : Fragment(), MenuProvider {
-    private val apodViewModel by lazy {
-        val apodService = ApodService.getInstance()
-        val apodRepository = ApodRepository(apodService)
-        ViewModelProvider(this, ApodViewModelFactory(apodRepository))[ApodViewModel::class.java]
-    }
+    private val viewModel: ApodViewModel by viewModels()
 
     private var _binding: FragmentApodBinding? = null
     private val binding get() = _binding!!
@@ -52,10 +50,10 @@ class ApodFragment : Fragment(), MenuProvider {
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner)
 
-        if (apodViewModel.apod.value == null) {
+        if (viewModel.apod.value == null) {
             fetchApod()
         }
-        apodViewModel.apod.observe(viewLifecycleOwner) { apod ->
+        viewModel.apod.observe(viewLifecycleOwner) { apod ->
             updateIU(apod)
         }
     }
@@ -76,7 +74,7 @@ class ApodFragment : Fragment(), MenuProvider {
                 true
             }
             R.id.select_date -> {
-                // TODO
+                showDatePickerDialog()
                 true
             }
             R.id.share -> {
@@ -88,17 +86,33 @@ class ApodFragment : Fragment(), MenuProvider {
 
     private fun fetchApod() {
         binding.contentLayout.alpha = 0.0f
-        apodViewModel.fetchApod()
+        viewModel.fetchApod()
     }
 
     private fun fetchApodByDate(date: Date) {
         binding.contentLayout.alpha = 0.0f
-        apodViewModel.fetchApodByDate(date)
+        viewModel.fetchApodByDate(date)
     }
 
     private fun fetchRandomApod() {
         binding.contentLayout.alpha = 0.0f
-        apodViewModel.fetchRandomApod()
+        viewModel.fetchRandomApod()
+    }
+
+    private fun showDatePickerDialog() {
+        val constraint = CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointBackward.now())
+            .build()
+
+        MaterialDatePicker.Builder.datePicker()
+            .setCalendarConstraints(constraint)
+            .build()
+            .apply {
+                addOnPositiveButtonClickListener { date ->
+                    fetchApodByDate(Date(date))
+                }
+            }
+            .show(childFragmentManager, "DATE_PICKER")
     }
 
     private fun updateIU(apod: Apod) {
@@ -116,7 +130,11 @@ class ApodFragment : Fragment(), MenuProvider {
                 .into(apodImageView)
 
             apod.date?.let { date ->
-                dateTextView.text = DateHelper.format(getString(R.string.date_format_pattern), date)
+                dateTextView.text = formatDate(
+                    date,
+                    getString(R.string.date_format_pattern),
+                    Locale(getString(R.string.language), getString(R.string.country))
+                )
             }
 
             titleTextView.text = apod.title
