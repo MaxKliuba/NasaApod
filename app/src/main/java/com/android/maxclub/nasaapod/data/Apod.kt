@@ -8,6 +8,8 @@ data class Apod(
     @SerializedName("media_type") val mediaType: String? = null,
     @SerializedName("title") val title: String? = null,
     @SerializedName("explanation") val explanation: String? = null,
-    @SerializedName("date") val date: Date? = null,
+    @SerializedName("date") val date: Date,
     @SerializedName("copyright") val copyright: String? = null,
+    var isFavorite: Boolean = false,
+    var isImageLoaded: Boolean = false,
 )

@@ -2,7 +2,6 @@ package com.android.maxclub.nasaapod.api
 
 import com.android.maxclub.nasaapod.data.Apod
 import okhttp3.OkHttpClient
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -10,13 +9,13 @@ import retrofit2.http.Query
 
 interface ApodService {
     @GET("planetary/apod")
-    suspend fun getApod(): Response<Apod>
+    suspend fun getApodOfToday(): Apod
 
     @GET("planetary/apod")
-    suspend fun getApodByDate(@Query("date") date: String): Response<Apod>
+    suspend fun getApodByDate(@Query("date") date: String): Apod
 
-    @GET("planetary/apod")
-    suspend fun getRandomApod(@Query("count") count: Int = 1): Response<List<Apod>>
+    @GET("planetary/apod?count=1")
+    suspend fun getRandomApod(): List<Apod>
 
     companion object {
         private const val BASE_URL = "https://api.nasa.gov/"

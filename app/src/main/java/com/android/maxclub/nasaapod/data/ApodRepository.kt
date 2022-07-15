@@ -1,24 +1,25 @@
 package com.android.maxclub.nasaapod.data
 
-import com.android.maxclub.nasaapod.api.ApodService
-import com.android.maxclub.nasaapod.utils.formatDate
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.android.maxclub.nasaapod.data.source.remote.IApodRemoteDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ApodRepository @Inject constructor(
-    private val apodService: ApodService
+    private val apodRemoteDataSource: IApodRemoteDataSource
 ) {
-    suspend fun getApod() = withContext(Dispatchers.IO) {
-        apodService.getApod()
-    }
+    fun getApodOfToday(): Flow<Apod> =
+        apodRemoteDataSource.getApodOfToday()
+            .onEach {
 
-    suspend fun getApodByDate(date: Date) = withContext(Dispatchers.IO) {
-        apodService.getApodByDate(formatDate(date, "yyyy-MM-dd", Locale.ENGLISH))
-    }
+            }
 
-    suspend fun getRandomApod(count: Int = 1) = withContext(Dispatchers.IO) {
-        apodService.getRandomApod(count)
-    }
+    fun getApodByDate(date: Date): Flow<Apod> =
+        apodRemoteDataSource.getApodByDate(date)
+
+    fun getRandomApod(): Flow<Apod> =
+        apodRemoteDataSource.getRandomApod()
 }
