@@ -48,7 +48,7 @@ class ApodFragment : Fragment(), MenuProvider {
                     viewModel.refreshCurrentApod()
                 }
             }
-            apodImageView.setOnClickListener {
+            imageView.setOnClickListener {
                 if (viewModel.isImageLoaded) {
                     // TODO
                     Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
@@ -57,9 +57,9 @@ class ApodFragment : Fragment(), MenuProvider {
             favoriteFab.setOnClickListener {
                 viewModel.currentApod?.let { apod ->
                     if (apod.isFavorite) {
-                        viewModel.removeFromFavorite(apod)
+                        viewModel.removeFromFavorites(apod)
                     } else {
-                        viewModel.addToFavorite(apod)
+                        viewModel.addToFavorites(apod)
                     }
                 }
             }
@@ -143,7 +143,7 @@ class ApodFragment : Fragment(), MenuProvider {
                         }
                     })
                 }
-                .into(apodImageView)
+                .into(imageView)
             dateTextView.text = formatDate(
                 apod.date,
                 getString(R.string.date_format_pattern),

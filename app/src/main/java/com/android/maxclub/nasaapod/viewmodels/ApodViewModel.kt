@@ -18,6 +18,7 @@ class ApodViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ApodUiState>(ApodUiState.Initializing)
     val uiState: StateFlow<ApodUiState> = _uiState
     private var fetchJob: Job? = null
+    private var favoritesJob: Job? = null
 
     val currentApod: Apod? get() = (uiState.value as? ApodUiState.Success)?.data
     var isImageLoaded: Boolean
@@ -44,12 +45,24 @@ class ApodViewModel @Inject constructor(
         }
     }
 
-    fun addToFavorite(apod: Apod) {
-        // TODO
+    fun addToFavorites(apod: Apod) {
+        favoritesJob?.cancel()
+        favoritesJob = viewModelScope.launch {
+            apodRepository.addApodToFavorites(apod)
+                .collect { newApod ->
+                    _uiState.value = ApodUiState.Success(newApod)
+                }
+        }
     }
 
-    fun removeFromFavorite(apod: Apod) {
-        // TODO
+    fun removeFromFavorites(apod: Apod) {
+        favoritesJob?.cancel()
+        favoritesJob = viewModelScope.launch {
+            apodRepository.removeApodFromFavorites(apod)
+                .collect { newApod ->
+                    _uiState.value = ApodUiState.Success(newApod)
+                }
+        }
     }
 
     private fun fetchApod(apodFlow: Flow<Apod>) {

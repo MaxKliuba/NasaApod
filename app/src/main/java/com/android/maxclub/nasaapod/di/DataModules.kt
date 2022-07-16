@@ -1,6 +1,8 @@
 package com.android.maxclub.nasaapod.di
 
 import com.android.maxclub.nasaapod.api.ApodService
+import com.android.maxclub.nasaapod.data.source.local.FavoriteApodLocalDataSource
+import com.android.maxclub.nasaapod.data.source.local.IFavoriteApodLocalDataSource
 import com.android.maxclub.nasaapod.data.source.remote.ApodRemoteDataSource
 import com.android.maxclub.nasaapod.data.source.remote.IApodRemoteDataSource
 import dagger.Module
@@ -28,4 +30,10 @@ object DataSourceModule {
         apodService: ApodService
     ): IApodRemoteDataSource =
         ApodRemoteDataSource(apodService)
+
+    @Provides
+    fun provideFavoriteApodLocalDataSource(
+        // Dao
+    ): IFavoriteApodLocalDataSource =
+        FavoriteApodLocalDataSource()
 }
