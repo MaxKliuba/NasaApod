@@ -11,20 +11,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.FavoritesAdapter
 import com.android.maxclub.nasaapod.adapters.FavoritesDiffCallback
 import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.databinding.FragmentFavoriteListBinding
+import com.android.maxclub.nasaapod.databinding.FragmentFavoritesListBinding
 import com.android.maxclub.nasaapod.uistates.FavoriteListUiState
 import com.android.maxclub.nasaapod.viewmodels.FavoriteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoriteListFragment : Fragment() {
+class FavoritesListFragment : Fragment() {
     private val viewModel: FavoriteListViewModel by viewModels()
 
-    private var _binding: FragmentFavoriteListBinding? = null
+    private var _binding: FragmentFavoritesListBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var favoritesAdapter: FavoritesAdapter
@@ -33,14 +34,27 @@ class FavoriteListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavoriteListBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesListBinding.inflate(inflater, container, false)
 
-        binding.favoritesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = FavoritesAdapter(FavoritesDiffCallback()) { favoriteApod ->
-                Toast.makeText(requireContext(), favoriteApod.title, Toast.LENGTH_SHORT).show()
-            }.also { adapter ->
-                favoritesAdapter = adapter
+        binding.apply {
+            swipeRefreshLayout.apply {
+                setColorSchemeResources(R.color.color_primary)
+                setProgressBackgroundColorSchemeResource(R.color.color_action_bar)
+                setOnRefreshListener {
+                    isRefreshing = false
+                    viewModel.fetchFavoriteApods()
+                }
+            }
+            errorLayout.retryButton.setOnClickListener {
+                viewModel.fetchFavoriteApods()
+            }
+            favoritesRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = FavoritesAdapter(FavoritesDiffCallback()) { favoriteApod ->
+                    Toast.makeText(requireContext(), favoriteApod.title, Toast.LENGTH_SHORT).show()
+                }.also { adapter ->
+                    favoritesAdapter = adapter
+                }
             }
         }
 
@@ -55,7 +69,7 @@ class FavoriteListFragment : Fragment() {
                     is FavoriteListUiState.Initializing -> viewModel.fetchFavoriteApods()
                     is FavoriteListUiState.Loading -> showLoading()
                     is FavoriteListUiState.Success -> showData(uiState.data)
-                    is FavoriteListUiState.Error -> showErrorMessage(uiState.exception)
+                    is FavoriteListUiState.Error -> showErrorMessage()
                 }
             }
         }
@@ -69,7 +83,7 @@ class FavoriteListFragment : Fragment() {
     private fun showLoading() {
         binding.apply {
             contentLayout.alpha = 0.0f
-            errorTextView.isVisible = false
+            errorLayout.root.isVisible = false
             progressIndicator.isVisible = true
         }
     }
@@ -77,12 +91,12 @@ class FavoriteListFragment : Fragment() {
     private fun showData(favoriteApods: List<FavoriteApod>) {
         binding.apply {
             progressIndicator.isVisible = false
-            errorTextView.isVisible = false
+            errorLayout.root.isVisible = false
             if (favoriteApods.isEmpty()) {
                 favoritesRecyclerView.isVisible = false
-                emptyListTextView.isVisible = true
+                emptyListLayout.isVisible = true
             } else {
-                emptyListTextView.isVisible = false
+                emptyListLayout.isVisible = false
                 favoritesRecyclerView.isVisible = true
             }
             contentLayout.animate()
@@ -94,14 +108,11 @@ class FavoriteListFragment : Fragment() {
         }
     }
 
-    private fun showErrorMessage(exception: Throwable) {
+    private fun showErrorMessage() {
         binding.apply {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false
-            errorTextView.apply {
-                text = exception.localizedMessage
-                isVisible = true
-            }
+            errorLayout.root.isVisible = false
         }
     }
 }

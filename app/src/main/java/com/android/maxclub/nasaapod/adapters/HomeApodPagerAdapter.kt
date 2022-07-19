@@ -7,5 +7,6 @@ import com.android.maxclub.nasaapod.fragments.ApodFragment
 class HomeApodPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 1
 
-    override fun createFragment(position: Int): Fragment = ApodFragment()
+    override fun createFragment(position: Int): Fragment =
+        ApodFragment.newInstance(false, null)
 }

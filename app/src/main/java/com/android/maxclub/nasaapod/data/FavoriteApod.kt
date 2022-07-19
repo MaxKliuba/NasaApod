@@ -7,4 +7,5 @@ data class FavoriteApod(
     val title: String? = null,
     val date: Date,
     val copyright: String? = null,
+    val position: Int = -1,
 )

@@ -5,13 +5,17 @@
       <map>
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_download_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_outline_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_home_24.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_image_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_nasa_logo.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_random_24.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/error_layout.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_apod.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_favorite_list.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_favorites_list.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_favorites_view_pager.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_home_view_pager.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_favorite_apod.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/fragment_home_view_pager.xml" value="0.25" />

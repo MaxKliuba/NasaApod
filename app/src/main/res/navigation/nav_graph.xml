@@ -11,17 +11,26 @@
         android:label="APOD"
         tools:layout="@layout/fragment_apod"/>
     <fragment
-        android:id="@+id/favorite_list_fragment"
-        android:name="com.android.maxclub.nasaapod.fragments.FavoriteListFragment"
-        android:label="Favorite List"
-        tools:layout="@layout/fragment_favorite_list"/>
+        android:id="@+id/favorites_list_fragment"
+        android:name="com.android.maxclub.nasaapod.fragments.FavoritesListFragment"
+        android:label="Favorites List"
+        tools:layout="@layout/fragment_favorites_list">
+        <action
+            android:id="@+id/action_favorites_list_fragment_to_favorites_view_pager_fragment"
+            app:destination="@id/favorites_view_pager_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/home_view_pager_fragment"
         android:name="com.android.maxclub.nasaapod.fragments.HomeViewPagerFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home_view_pager" >
-        <action
-            android:id="@+id/action_home_view_pager_fragment_to_apod_fragment"
-            app:destination="@id/apod_fragment" />
+        tools:layout="@layout/fragment_home_view_pager" />
+    <fragment
+        android:id="@+id/favorites_view_pager_fragment"
+        android:name="com.android.maxclub.nasaapod.fragments.FavoritesViewPagerFragment"
+        android:label="fragment_favorites_view_pager"
+        tools:layout="@layout/fragment_favorites_view_pager" >
+        <argument
+            android:name="date"
+            app:argType="java.util.Date" />
     </fragment>
 </navigation>

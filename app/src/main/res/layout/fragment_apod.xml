@@ -11,26 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progress_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/error_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:visibility="invisible"
-            tools:text="Test Error Message"
-            tools:visibility="visible" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
@@ -129,5 +109,22 @@
                 app:srcCompat="@drawable/ic_favorite_border_24"
                 tools:ignore="ContentDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/error_layout"
+            layout="@layout/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            tools:visibility="visible" />
     </FrameLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

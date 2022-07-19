@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private val tabsFragmentId = listOf(
         setOf(R.id.home_view_pager_fragment),
-        setOf(R.id.favorite_list_fragment),
+        setOf(R.id.favorites_list_fragment),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 if (binding.tabLayout.tag != false) {
                     when (tab.position) {
                         0 -> navController.navigate(R.id.home_view_pager_fragment)
-                        1 -> navController.navigate(R.id.favorite_list_fragment)
+                        1 -> navController.navigate(R.id.favorites_list_fragment)
                     }
                 }
             }
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 if (binding.tabLayout.tag != false) {
                     when (tab.position) {
                         0 -> navController.navigate(R.id.home_view_pager_fragment)
-                        1 -> navController.navigate(R.id.favorite_list_fragment)
+                        1 -> navController.navigate(R.id.favorites_list_fragment)
                     }
                 }
             }

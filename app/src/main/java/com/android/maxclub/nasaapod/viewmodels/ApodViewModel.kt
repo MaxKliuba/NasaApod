@@ -20,12 +20,31 @@ class ApodViewModel @Inject constructor(
     private var fetchJob: Job? = null
     private var favoritesJob: Job? = null
 
+    var isDateRandom: Boolean = false
+        private set
+    var currentDate: Date? = null
+        private set
     val currentApod: Apod? get() = (uiState.value as? ApodUiState.Success)?.data
     var isImageLoaded: Boolean
         get() = currentApod?.isImageLoaded ?: false
         set(value) {
             currentApod?.isImageLoaded = value
         }
+
+    fun setArguments(isDateRandom: Boolean, date: Date? = null) {
+        this.isDateRandom = isDateRandom
+        currentDate = date
+    }
+
+    fun fetchInitApod() {
+        if (isDateRandom) {
+            fetchRandomApod()
+        } else {
+            currentDate?.let { date ->
+                fetchApodByDate(date)
+            } ?: fetchApodOfToday()
+        }
+    }
 
     fun fetchApodOfToday() {
         fetchApod(apodRepository.getApodOfToday())
@@ -40,9 +59,9 @@ class ApodViewModel @Inject constructor(
     }
 
     fun refreshCurrentApod() {
-        currentApod?.let { apod ->
-            fetchApod(apodRepository.getApodByDate(apod.date))
-        }
+        currentDate?.let { date ->
+            fetchApod(apodRepository.getApodByDate(date))
+        } ?: fetchRandomApod()
     }
 
     fun addToFavorites(apod: Apod) {
@@ -74,6 +93,7 @@ class ApodViewModel @Inject constructor(
                 }.catch { exception ->
                     _uiState.value = ApodUiState.Error(exception)
                 }.collect { apod ->
+                    currentDate = apod.date
                     _uiState.value = ApodUiState.Success(apod)
                 }
         }

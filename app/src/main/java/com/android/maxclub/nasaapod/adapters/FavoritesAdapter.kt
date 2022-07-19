@@ -48,6 +48,8 @@ class FavoritesAdapter(
                 val context = root.context
                 Picasso.get()
                     .load(favoriteApod.url)
+                    .fit()
+                    .centerCrop()
                     .error(R.drawable.ic_image_error_placeholder_24)
                     .placeholder(R.drawable.ic_image_placeholder_24)
                     .into(imageView)

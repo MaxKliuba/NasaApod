@@ -5,6 +5,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -26,12 +27,25 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
+private const val ARG_RANDOM_DATE_FLAG = "randomDateFlag"
+private const val ARG_DATE = "date"
+
 @AndroidEntryPoint
 class ApodFragment : Fragment(), MenuProvider {
     private val viewModel: ApodViewModel by viewModels()
 
     private var _binding: FragmentApodBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            viewModel.setArguments(
+                isDateRandom = it.getBoolean(ARG_RANDOM_DATE_FLAG, false),
+                date = it.getSerializable(ARG_DATE) as Date?
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +61,9 @@ class ApodFragment : Fragment(), MenuProvider {
                     isRefreshing = false
                     viewModel.refreshCurrentApod()
                 }
+            }
+            errorLayout.retryButton.setOnClickListener {
+                viewModel.refreshCurrentApod()
             }
             imageView.setOnClickListener {
                 if (viewModel.isImageLoaded) {
@@ -77,10 +94,10 @@ class ApodFragment : Fragment(), MenuProvider {
         lifecycleScope.launch {
             viewModel.uiState.collect { uiState ->
                 when (uiState) {
-                    is ApodUiState.Initializing -> viewModel.fetchApodOfToday()
+                    is ApodUiState.Initializing -> viewModel.fetchInitApod()
                     is ApodUiState.Loading -> showLoading()
                     is ApodUiState.Success -> showData(uiState.data)
-                    is ApodUiState.Error -> showErrorMessage(uiState.exception)
+                    is ApodUiState.Error -> showErrorMessage()
                 }
             }
         }
@@ -115,7 +132,7 @@ class ApodFragment : Fragment(), MenuProvider {
     private fun showLoading() {
         binding.apply {
             contentLayout.alpha = 0.0f
-            errorTextView.isVisible = false
+            errorLayout.root.isVisible = false
             progressIndicator.isVisible = true
         }
     }
@@ -123,7 +140,7 @@ class ApodFragment : Fragment(), MenuProvider {
     private fun showData(apod: Apod) {
         binding.apply {
             progressIndicator.isVisible = false
-            errorTextView.isVisible = false
+            errorLayout.root.isVisible = false
             contentLayout.animate()
                 .alpha(1.0f)
                 .setInterpolator(AccelerateDecelerateInterpolator())
@@ -160,14 +177,11 @@ class ApodFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun showErrorMessage(exception: Throwable) {
+    private fun showErrorMessage() {
         binding.apply {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false
-            errorTextView.apply {
-                text = exception.localizedMessage
-                isVisible = true
-            }
+            errorLayout.root.isVisible = true
         }
     }
 
@@ -178,6 +192,7 @@ class ApodFragment : Fragment(), MenuProvider {
 
         MaterialDatePicker.Builder.datePicker()
             .setCalendarConstraints(constraint)
+            .setSelection(Date().time)
             .build()
             .apply {
                 addOnPositiveButtonClickListener { date ->
@@ -185,5 +200,16 @@ class ApodFragment : Fragment(), MenuProvider {
                 }
             }
             .show(childFragmentManager, "DATE_PICKER")
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(isDateRandom: Boolean, date: Date? = null) =
+            ApodFragment().apply {
+                arguments = bundleOf(
+                    ARG_RANDOM_DATE_FLAG to isDateRandom,
+                    ARG_DATE to date,
+                )
+            }
     }
 }
