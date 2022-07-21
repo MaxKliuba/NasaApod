@@ -13,10 +13,4 @@
         android:icon="@drawable/ic_calendar_24"
         android:title="@string/select_date_item_title"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/share"
-        android:icon="@drawable/ic_share_24"
-        android:title="@string/share_item_title"
-        app:showAsAction="ifRoom" />
 </menu>

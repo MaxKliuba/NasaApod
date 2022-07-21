@@ -1,8 +1,7 @@
 package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.*
-import com.android.maxclub.nasaapod.data.Apod
-import com.android.maxclub.nasaapod.data.ApodRepository
+import com.android.maxclub.nasaapod.data.*
 import com.android.maxclub.nasaapod.uistates.ApodUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -13,17 +12,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApodViewModel @Inject constructor(
-    private val apodRepository: ApodRepository
+    private val apodDateRepository: ApodDateRepository,
+    private val apodRepository: ApodRepository,
+    private val favoriteApodRepository: FavoriteApodRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ApodUiState>(ApodUiState.Initializing)
     val uiState: StateFlow<ApodUiState> = _uiState
     private var fetchJob: Job? = null
     private var favoritesJob: Job? = null
-
-    var isDateRandom: Boolean = false
-        private set
-    var currentDate: Date? = null
-        private set
+    var currentApodDate: ApodDate = ApodDate.Today()
     val currentApod: Apod? get() = (uiState.value as? ApodUiState.Success)?.data
     var isImageLoaded: Boolean
         get() = currentApod?.isImageLoaded ?: false
@@ -31,56 +28,49 @@ class ApodViewModel @Inject constructor(
             currentApod?.isImageLoaded = value
         }
 
-    fun setArguments(isDateRandom: Boolean, date: Date? = null) {
-        this.isDateRandom = isDateRandom
-        currentDate = date
-    }
-
     fun fetchInitApod() {
-        if (isDateRandom) {
-            fetchRandomApod()
-        } else {
-            currentDate?.let { date ->
-                fetchApodByDate(date)
-            } ?: fetchApodOfToday()
+        currentApodDate.let { apodDate ->
+            when (apodDate) {
+                is ApodDate.Today -> fetchApodOfToday()
+                is ApodDate.From -> fetchApodByDate(apodDate.date!!)
+                is ApodDate.Random -> fetchRandomApod()
+            }
         }
     }
 
-    fun fetchApodOfToday() {
+    private fun fetchApodOfToday() {
         fetchApod(apodRepository.getApodOfToday())
     }
 
-    fun fetchApodByDate(date: Date) {
+    private fun fetchApodByDate(date: Date) {
         fetchApod(apodRepository.getApodByDate(date))
     }
 
-    fun fetchRandomApod() {
+    private fun fetchRandomApod() {
         fetchApod(apodRepository.getRandomApod())
     }
 
     fun refreshCurrentApod() {
-        currentDate?.let { date ->
-            fetchApod(apodRepository.getApodByDate(date))
-        } ?: fetchRandomApod()
+        currentApodDate.date?.let { date ->
+            fetchApodByDate(date)
+        }
     }
 
     fun addToFavorites(apod: Apod) {
         favoritesJob?.cancel()
         favoritesJob = viewModelScope.launch {
-            apodRepository.addApodToFavorites(apod)
-                .collect { newApod ->
-                    _uiState.value = ApodUiState.Success(newApod)
-                }
+            if (favoriteApodRepository.addApodToFavorites(apod)) {
+                _uiState.value = ApodUiState.Success(apod.copy(isFavorite = true))
+            }
         }
     }
 
     fun removeFromFavorites(apod: Apod) {
         favoritesJob?.cancel()
         favoritesJob = viewModelScope.launch {
-            apodRepository.removeApodFromFavorites(apod)
-                .collect { newApod ->
-                    _uiState.value = ApodUiState.Success(newApod)
-                }
+            if (favoriteApodRepository.removeApodFromFavorites(apod)) {
+                _uiState.value = ApodUiState.Success(apod.copy(isFavorite = false))
+            }
         }
     }
 
@@ -93,7 +83,8 @@ class ApodViewModel @Inject constructor(
                 }.catch { exception ->
                     _uiState.value = ApodUiState.Error(exception)
                 }.collect { apod ->
-                    currentDate = apod.date
+                    currentApodDate = ApodDate.From(apod.date, currentApodDate.id)
+                    apodDateRepository.updateApodDate(currentApodDate)
                     _uiState.value = ApodUiState.Success(apod)
                 }
         }

@@ -9,6 +9,6 @@ data class Apod(
     @SerializedName("explanation") val explanation: String? = null,
     @SerializedName("date") val date: Date,
     @SerializedName("copyright") val copyright: String? = null,
-    var isFavorite: Boolean = false,
+    val isFavorite: Boolean = false,
     var isImageLoaded: Boolean = false,
 )

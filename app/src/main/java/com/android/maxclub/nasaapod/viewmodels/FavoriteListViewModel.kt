@@ -2,7 +2,8 @@ package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.maxclub.nasaapod.data.ApodRepository
+import com.android.maxclub.nasaapod.data.FavoriteApod
+import com.android.maxclub.nasaapod.data.FavoriteApodRepository
 import com.android.maxclub.nasaapod.uistates.FavoriteListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteListViewModel @Inject constructor(
-    private val apodRepository: ApodRepository
+    private val favoriteApodRepository: FavoriteApodRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<FavoriteListUiState>(FavoriteListUiState.Initializing)
     val uiState: StateFlow<FavoriteListUiState> = _uiState
@@ -24,14 +25,24 @@ class FavoriteListViewModel @Inject constructor(
     fun fetchFavoriteApods() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            apodRepository.getFavoriteApods()
+            favoriteApodRepository.getFavoriteApods()
                 .onStart {
                     _uiState.value = FavoriteListUiState.Loading
                 }.catch { exception ->
                     _uiState.value = FavoriteListUiState.Error(exception)
-                }.collect { apod ->
-                    _uiState.value = FavoriteListUiState.Success(apod)
+                }.collect { favoriteApods ->
+                    _uiState.value = FavoriteListUiState.Success(favoriteApods)
                 }
         }
     }
+
+    fun unmarkAsNewFavoriteApod(favoriteApod: FavoriteApod) =
+        updateFavoriteApod(
+            favoriteApod.copy(isNew = false)
+        )
+
+    private fun updateFavoriteApod(favoriteApod: FavoriteApod) =
+        viewModelScope.launch {
+            favoriteApodRepository.updateFavoriteApod(favoriteApod)
+        }
 }

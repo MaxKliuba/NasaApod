@@ -24,54 +24,14 @@ class ApodRepository @Inject constructor(
         apodRemoteDataSource.getRandomApod()
             .checkIsFavorite()
 
-
-    fun getFavoriteApods(): Flow<List<FavoriteApod>> =
-        favoriteApodLocalDataSource.getFavoriteApods()
-
-    private fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod?> =
+    private fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod> =
         favoriteApodLocalDataSource.getFavoriteApodByDate(date)
 
-    fun addApodToFavorites(apod: Apod): Flow<Apod> = flow {
-        emit(
-            favoriteApodLocalDataSource.insertFavoriteApod(
-                FavoriteApod(
-                    url = apod.url,
-                    title = apod.title,
-                    date = apod.date,
-                    copyright = apod.copyright,
-                )
-            ).let { isSuccess ->
-                apod.apply {
-                    if (isSuccess) isFavorite = true
-                }
-            }
-        )
-    }
-
-    fun removeApodFromFavorites(apod: Apod): Flow<Apod> = flow {
-        emit(
-            favoriteApodLocalDataSource.deleteFavoriteApod(
-                FavoriteApod(
-                    url = apod.url,
-                    title = apod.title,
-                    date = apod.date,
-                    copyright = apod.copyright,
-                )
-            ).let { isSuccess ->
-                apod.apply {
-                    if (isSuccess) isFavorite = false
-                }
-            }
-        )
-    }
-
-    suspend fun updateFavoriteApod(favoriteApod: FavoriteApod) =
-        favoriteApodLocalDataSource.updateFavoriteApod(favoriteApod)
-
     private fun Flow<Apod>.checkIsFavorite(): Flow<Apod> =
-        onEach { apod ->
-            getFavoriteApodByDate(apod.date).first()?.let {
-                apod.isFavorite = true
-            }
+        map { apod ->
+            getFavoriteApodByDate(apod.date)
+                .firstOrNull()?.let {
+                    apod.copy(isFavorite = true)
+                } ?: apod
         }
 }

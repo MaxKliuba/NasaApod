@@ -8,7 +8,7 @@ interface IFavoriteApodLocalDataSource {
 
     fun getFavoriteApods(): Flow<List<FavoriteApod>>
 
-    fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod?>
+    fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod>
 
     suspend fun insertFavoriteApod(favoriteApod: FavoriteApod): Boolean
 

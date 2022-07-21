@@ -9,6 +9,7 @@
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_home_24.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_image_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_nasa_logo.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_new_item_label_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_random_24.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/error_layout.xml" value="0.22826086956521738" />
@@ -18,6 +19,9 @@
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_favorites_view_pager.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_home_view_pager.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_favorite_apod.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_new_favorite_apod.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_old_favorite_apod.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/fragment_apod.xml" value="0.25" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/fragment_home_view_pager.xml" value="0.25" />
       </map>
     </option>

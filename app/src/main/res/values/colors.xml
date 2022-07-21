@@ -17,4 +17,5 @@
     <color name="color_background">@color/white</color>
     <color name="color_on_background">@color/black</color>
     <color name="color_disabled">#CCCCCC</color>
+    <color name="color_new_item_label">#A31E2A</color>
 </resources>

@@ -10,16 +10,16 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentApodBinding
 import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.uistates.ApodUiState
 import com.android.maxclub.nasaapod.utils.formatDate
 import com.android.maxclub.nasaapod.viewmodels.ApodViewModel
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
-private const val ARG_RANDOM_DATE_FLAG = "randomDateFlag"
 private const val ARG_DATE = "date"
 
 @AndroidEntryPoint
@@ -39,12 +38,7 @@ class ApodFragment : Fragment(), MenuProvider {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            viewModel.setArguments(
-                isDateRandom = it.getBoolean(ARG_RANDOM_DATE_FLAG, false),
-                date = it.getSerializable(ARG_DATE) as Date?
-            )
-        }
+        viewModel.currentApodDate = arguments?.getSerializable(ARG_DATE) as ApodDate
     }
 
     override fun onCreateView(
@@ -68,7 +62,7 @@ class ApodFragment : Fragment(), MenuProvider {
             imageView.setOnClickListener {
                 if (viewModel.isImageLoaded) {
                     // TODO
-                    Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Open picture", Toast.LENGTH_SHORT).show()
                 }
             }
             favoriteFab.setOnClickListener {
@@ -82,25 +76,23 @@ class ApodFragment : Fragment(), MenuProvider {
             }
         }
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner)
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when (uiState) {
-                    is ApodUiState.Initializing -> viewModel.fetchInitApod()
-                    is ApodUiState.Loading -> showLoading()
-                    is ApodUiState.Success -> showData(uiState.data)
-                    is ApodUiState.Error -> showErrorMessage()
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is ApodUiState.Initializing -> viewModel.fetchInitApod()
+                        is ApodUiState.Loading -> showLoading()
+                        is ApodUiState.Success -> showData(uiState.data)
+                        is ApodUiState.Error -> showErrorMessage()
+                    }
                 }
             }
         }
+
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -109,20 +101,13 @@ class ApodFragment : Fragment(), MenuProvider {
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.fragment_home_view_pager, menu)
+        menuInflater.inflate(R.menu.fragment_apod, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
         when (menuItem.itemId) {
-            R.id.random_date -> {
-                viewModel.fetchRandomApod()
-                true
-            }
-            R.id.select_date -> {
-                showDatePickerDialog()
-                true
-            }
             R.id.share -> {
+                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show()
                 // TODO
                 true
             }
@@ -185,30 +170,12 @@ class ApodFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun showDatePickerDialog() {
-        val constraint = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointBackward.now())
-            .build()
-
-        MaterialDatePicker.Builder.datePicker()
-            .setCalendarConstraints(constraint)
-            .setSelection(Date().time)
-            .build()
-            .apply {
-                addOnPositiveButtonClickListener { date ->
-                    viewModel.fetchApodByDate(Date(date))
-                }
-            }
-            .show(childFragmentManager, "DATE_PICKER")
-    }
-
     companion object {
         @JvmStatic
-        fun newInstance(isDateRandom: Boolean, date: Date? = null) =
+        fun newInstance(apodDate: ApodDate) =
             ApodFragment().apply {
                 arguments = bundleOf(
-                    ARG_RANDOM_DATE_FLAG to isDateRandom,
-                    ARG_DATE to date,
+                    ARG_DATE to apodDate,
                 )
             }
     }

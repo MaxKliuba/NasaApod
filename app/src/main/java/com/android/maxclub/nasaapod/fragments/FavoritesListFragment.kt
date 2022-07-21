@@ -9,7 +9,9 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.FavoritesAdapter
@@ -51,9 +53,24 @@ class FavoritesListFragment : Fragment() {
             favoritesRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = FavoritesAdapter(FavoritesDiffCallback()) { favoriteApod ->
-                    Toast.makeText(requireContext(), favoriteApod.title, Toast.LENGTH_SHORT).show()
+                    // TODO
+                    viewModel.unmarkAsNewFavoriteApod(favoriteApod)
+                    Toast.makeText(context, favoriteApod.title, Toast.LENGTH_SHORT).show()
                 }.also { adapter ->
                     favoritesAdapter = adapter
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is FavoriteListUiState.Initializing -> viewModel.fetchFavoriteApods()
+                        is FavoriteListUiState.Loading -> showLoading()
+                        is FavoriteListUiState.Success -> showData(uiState.data)
+                        is FavoriteListUiState.Error -> showErrorMessage()
+                    }
                 }
             }
         }
@@ -61,24 +78,15 @@ class FavoritesListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            viewModel.uiState.collect { uiState ->
-                when (uiState) {
-                    is FavoriteListUiState.Initializing -> viewModel.fetchFavoriteApods()
-                    is FavoriteListUiState.Loading -> showLoading()
-                    is FavoriteListUiState.Success -> showData(uiState.data)
-                    is FavoriteListUiState.Error -> showErrorMessage()
-                }
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//
+//    }
 
     private fun showLoading() {
         binding.apply {
@@ -98,13 +106,12 @@ class FavoritesListFragment : Fragment() {
             } else {
                 emptyListLayout.isVisible = false
                 favoritesRecyclerView.isVisible = true
+                favoritesAdapter.submitList(favoriteApods)
             }
             contentLayout.animate()
                 .alpha(1.0f)
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .duration = 300
-
-            favoritesAdapter.submitList(favoriteApods)
         }
     }
 
