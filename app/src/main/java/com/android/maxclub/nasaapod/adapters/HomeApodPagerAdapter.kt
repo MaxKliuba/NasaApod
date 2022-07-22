@@ -6,25 +6,29 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.fragments.ApodFragment
 
-class HomeApodPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-    private val currentList: MutableList<ApodDate> = mutableListOf()
+class HomeApodPagerAdapter(
+    fragment: Fragment,
+    initialList: List<ApodDate> = emptyList()
+) : FragmentStateAdapter(fragment) {
+    private val _currentList: MutableList<ApodDate> = initialList.toMutableList()
+    val currentList: List<ApodDate> = _currentList
 
-    override fun getItemCount(): Int = currentList.size
+    override fun getItemCount(): Int = _currentList.size
 
     override fun createFragment(position: Int): Fragment =
-        ApodFragment.newInstance(currentList[position])
+        ApodFragment.newInstance(_currentList[position])
 
     override fun getItemId(position: Int): Long =
-        currentList[position].id.leastSignificantBits
+        _currentList[position].id.leastSignificantBits
 
     override fun containsItem(itemId: Long): Boolean =
-        currentList.any { it.id.leastSignificantBits == itemId }
+        _currentList.any { it.id.leastSignificantBits == itemId }
 
     fun submitList(newList: List<ApodDate>) {
-        val callback = PagerDiffUtil(currentList, newList)
+        val callback = PagerDiffUtil(_currentList, newList)
         val diff = DiffUtil.calculateDiff(callback)
-        currentList.clear()
-        currentList.addAll(newList)
+        _currentList.clear()
+        _currentList.addAll(newList)
         diff.dispatchUpdatesTo(this)
     }
 }

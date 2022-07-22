@@ -85,6 +85,7 @@ class ApodViewModel @Inject constructor(
                 }.collect { apod ->
                     currentApodDate = ApodDate.From(apod.date, currentApodDate.id)
                     apodDateRepository.updateApodDate(currentApodDate)
+                    apodDateRepository.updateLastLoadedDate(apod.date)
                     _uiState.value = ApodUiState.Success(apod)
                 }
         }

@@ -2,21 +2,24 @@ package com.android.maxclub.nasaapod.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ApodDateRepository @Inject constructor() {
-    private val apodDates = MutableStateFlow<List<ApodDate>>(listOf(ApodDate.Today()))
+    private val apodDates = MutableStateFlow<Set<ApodDate>>(setOf(ApodDate.Today()))
+    private var lastLoadedDate = MutableStateFlow<Date?>(null)
 
-    fun getApodDates(): Flow<List<ApodDate>> = apodDates
+    fun getApodDates(): Flow<Set<ApodDate>> = apodDates
 
-    fun addNewDate(newDate: ApodDate) {
+    fun addNewApodDate(newDate: ApodDate) {
         apodDates.value += newDate
     }
 
-    fun replaceAllWithNewDate(newDate: ApodDate) {
-        apodDates.value = listOf(newDate)
+    fun replaceAllWithNewApodDate(newDate: ApodDate) {
+        apodDates.value = setOf(newDate)
+        updateLastLoadedDate(null)
     }
 
     fun updateApodDate(apodDate: ApodDate) {
@@ -26,6 +29,12 @@ class ApodDateRepository @Inject constructor() {
             } else {
                 it
             }
-        }
+        }.toSet()
+    }
+
+    fun getLastLoadedDate(): Flow<Date?> = lastLoadedDate
+
+    fun updateLastLoadedDate(newDate: Date?) {
+        lastLoadedDate.value = newDate
     }
 }

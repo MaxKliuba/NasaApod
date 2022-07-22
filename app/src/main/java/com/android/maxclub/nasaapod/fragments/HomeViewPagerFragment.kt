@@ -14,6 +14,8 @@ import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.HomeApodPagerAdapter
 import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.databinding.FragmentHomeViewPagerBinding
+import com.android.maxclub.nasaapod.utils.getNextDate
+import com.android.maxclub.nasaapod.utils.getPrevDate
 import com.android.maxclub.nasaapod.viewmodels.HomeViewModel
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -29,19 +31,22 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
     private var _binding: FragmentHomeViewPagerBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var pagerAdapter: HomeApodPagerAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeViewPagerBinding.inflate(inflater, container, false)
 
-        val pagerAdapter = HomeApodPagerAdapter(this)
+        pagerAdapter = HomeApodPagerAdapter(this, viewModel.apodDates.value)
         binding.viewPager.apply {
             adapter = pagerAdapter
+            currentItem = viewModel.currentPosition
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-
+                    viewModel.currentPosition = position
                 }
             })
         }
@@ -50,10 +55,29 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.apodDates.collect { apodDates ->
-                    pagerAdapter.submitList(apodDates)
-//                    binding.viewPager.setCurrentItem(pagerAdapter.itemCount, true)
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.apodDates.collect { apodDates ->
+                        pagerAdapter.submitList(apodDates)
+                    }
+                }
+            }
+
+            launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.lastLoadedDate.collect { currentDate ->
+                        currentDate?.let { date ->
+                            val position = viewModel.currentPosition
+                            if (position == 0) {
+                                val prevDate = getPrevDate(date)
+                                viewModel.addNewApodDate(ApodDate.From(prevDate))
+                            }
+                            if (position == pagerAdapter.itemCount - 1) {
+                                val nextDate = getNextDate(date)
+                                viewModel.addNewApodDate(ApodDate.From(nextDate))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -73,7 +97,7 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
         when (menuItem.itemId) {
             R.id.random_date -> {
-                viewModel.replaceAllWithNewDate(ApodDate.Random())
+                viewModel.replaceAllWithNewApodDate(ApodDate.Random())
                 true
             }
             R.id.select_date -> {
@@ -90,11 +114,10 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
 
         MaterialDatePicker.Builder.datePicker()
             .setCalendarConstraints(constraint)
-            .setSelection(Date().time)
             .build()
             .apply {
                 addOnPositiveButtonClickListener { date ->
-                    viewModel.addNewDate(ApodDate.From(Date(date)))
+                    viewModel.replaceAllWithNewApodDate(ApodDate.From(Date(date)))
                 }
             }
             .show(childFragmentManager, "DATE_PICKER")

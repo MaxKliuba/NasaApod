@@ -21,3 +21,19 @@ fun parseDate(
     val dateFormatter = SimpleDateFormat(pattern, locale)
     return dateFormatter.parse(date)
 }
+
+private val calendar: Calendar = Calendar.getInstance()
+
+fun getNextDate(date: Date): Date =
+    calendar.let { calendar ->
+        calendar.time = date
+        calendar.add(Calendar.DATE, 1)
+        calendar.time
+    }
+
+fun getPrevDate(date: Date): Date =
+    calendar.let { calendar ->
+        calendar.time = date
+        calendar.add(Calendar.DATE, -1)
+        calendar.time
+    }

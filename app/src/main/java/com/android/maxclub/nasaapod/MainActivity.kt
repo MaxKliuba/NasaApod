@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.databinding.ActivityMainBinding
 import com.android.maxclub.nasaapod.viewmodels.MainViewModel
 import com.google.android.material.tabs.TabLayout
@@ -77,17 +78,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                if (binding.tabLayout.tag != false) {
-                    when (tab.position) {
-                        HOME_TAB_INDEX -> navController.popBackStack(
-                            R.id.home_view_pager_fragment,
-                            false
-                        )
-                        FAVORITES_TAB_INDEX -> navController.popBackStack(
-                            R.id.favorites_list_fragment,
-                            false
-                        )
-                    }
+                if (binding.tabLayout.tag != false && tab.position == HOME_TAB_INDEX) {
+                    viewModel.replaceAllWithNewApodDate(ApodDate.Today())
                 }
             }
 

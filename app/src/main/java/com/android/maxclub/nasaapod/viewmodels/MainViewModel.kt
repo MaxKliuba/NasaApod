@@ -2,6 +2,8 @@ package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.maxclub.nasaapod.data.ApodDate
+import com.android.maxclub.nasaapod.data.ApodDateRepository
 import com.android.maxclub.nasaapod.data.FavoriteApodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -10,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val apodDateRepository: ApodDateRepository,
     private val favoriteApodRepository: FavoriteApodRepository,
 ) : ViewModel() {
     private val _newFavoritesCount: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -25,4 +28,7 @@ class MainViewModel @Inject constructor(
                 }
         }
     }
+
+    fun replaceAllWithNewApodDate(newDate: ApodDate) =
+        apodDateRepository.replaceAllWithNewApodDate(newDate)
 }

@@ -8,27 +8,41 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val apodDateRepository: ApodDateRepository
 ) : ViewModel() {
-    private val _apodDates = MutableStateFlow<List<ApodDate>>(listOf(ApodDate.Today()))
+    private val _apodDates = MutableStateFlow<List<ApodDate>>(emptyList())
     val apodDates: StateFlow<List<ApodDate>> = _apodDates
+    private val _lastLoadedDate = MutableStateFlow<Date?>(null)
+    val lastLoadedDate: StateFlow<Date?> = _lastLoadedDate
+    var currentPosition: Int = 0
 
     init {
         viewModelScope.launch {
-            apodDateRepository.getApodDates()
-                .collect { apodDates ->
-                    _apodDates.value = apodDates
-                }
+            launch {
+                apodDateRepository.getApodDates()
+                    .collect { apodDates ->
+                        _apodDates.value = apodDates.toList().sortedBy { it.date }
+                    }
+            }
+
+            launch {
+                apodDateRepository.getLastLoadedDate()
+                    .collect { date ->
+                        _lastLoadedDate.value = date
+                    }
+            }
+
         }
     }
 
-    fun addNewDate(newDate: ApodDate) =
-        apodDateRepository.addNewDate(newDate)
+    fun addNewApodDate(newDate: ApodDate) =
+        apodDateRepository.addNewApodDate(newDate)
 
-    fun replaceAllWithNewDate(newDate: ApodDate) =
-        apodDateRepository.replaceAllWithNewDate(newDate)
+    fun replaceAllWithNewApodDate(newDate: ApodDate) =
+        apodDateRepository.replaceAllWithNewApodDate(newDate)
 }
