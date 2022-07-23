@@ -3,7 +3,7 @@ package com.android.maxclub.nasaapod.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.data.FavoriteApodRepository
+import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
 import com.android.maxclub.nasaapod.uistates.FavoriteListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

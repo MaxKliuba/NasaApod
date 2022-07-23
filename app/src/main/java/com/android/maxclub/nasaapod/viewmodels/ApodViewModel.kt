@@ -2,6 +2,9 @@ package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.*
 import com.android.maxclub.nasaapod.data.*
+import com.android.maxclub.nasaapod.data.repository.ApodDateRepository
+import com.android.maxclub.nasaapod.data.repository.ApodRepository
+import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
 import com.android.maxclub.nasaapod.uistates.ApodUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -22,11 +25,6 @@ class ApodViewModel @Inject constructor(
     private var favoritesJob: Job? = null
     var currentApodDate: ApodDate = ApodDate.Today()
     val currentApod: Apod? get() = (uiState.value as? ApodUiState.Success)?.data
-    var isImageLoaded: Boolean
-        get() = currentApod?.isImageLoaded ?: false
-        set(value) {
-            currentApod?.isImageLoaded = value
-        }
 
     fun fetchInitApod() {
         currentApodDate.let { apodDate ->
@@ -51,8 +49,12 @@ class ApodViewModel @Inject constructor(
     }
 
     fun refreshCurrentApod() {
-        currentApodDate.date?.let { date ->
-            fetchApodByDate(date)
+        currentApodDate.let { apodDate ->
+            when {
+                apodDate is ApodDate.Today -> fetchApodOfToday()
+                apodDate.date != null -> fetchApodByDate(apodDate.date)
+                else -> fetchRandomApod()
+            }
         }
     }
 

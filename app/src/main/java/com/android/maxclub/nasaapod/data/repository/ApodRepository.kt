@@ -1,5 +1,7 @@
-package com.android.maxclub.nasaapod.data
+package com.android.maxclub.nasaapod.data.repository
 
+import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.data.FavoriteApod
 import com.android.maxclub.nasaapod.data.source.local.IFavoriteApodLocalDataSource
 import com.android.maxclub.nasaapod.data.source.remote.IApodRemoteDataSource
 import kotlinx.coroutines.flow.*

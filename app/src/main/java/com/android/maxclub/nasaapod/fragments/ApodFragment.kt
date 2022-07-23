@@ -1,6 +1,7 @@
 package com.android.maxclub.nasaapod.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -17,6 +18,7 @@ import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentApodBinding
 import com.android.maxclub.nasaapod.data.Apod
 import com.android.maxclub.nasaapod.data.ApodDate
+import com.android.maxclub.nasaapod.data.MediaType
 import com.android.maxclub.nasaapod.uistates.ApodUiState
 import com.android.maxclub.nasaapod.utils.formatDate
 import com.android.maxclub.nasaapod.viewmodels.ApodViewModel
@@ -27,6 +29,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 
+private const val LOG_TAG = "ApodFragment"
 private const val ARG_DATE = "date"
 
 @AndroidEntryPoint
@@ -60,9 +63,15 @@ class ApodFragment : Fragment(), MenuProvider {
                 viewModel.refreshCurrentApod()
             }
             imageView.setOnClickListener {
-                if (viewModel.isImageLoaded) {
-                    // TODO
-                    Toast.makeText(context, "Open picture", Toast.LENGTH_SHORT).show()
+                // TODO
+                Toast.makeText(context, "Open picture", Toast.LENGTH_SHORT).show()
+            }
+            placeholderImageView.setOnClickListener {
+                viewModel.currentApod?.mediaType?.let { mediaType ->
+                    if (mediaType == MediaType.VIDEO) {
+                        // TODO
+                        Toast.makeText(context, "Open video", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             favoriteFab.setOnClickListener {
@@ -86,7 +95,7 @@ class ApodFragment : Fragment(), MenuProvider {
                         is ApodUiState.Initializing -> viewModel.fetchInitApod()
                         is ApodUiState.Loading -> showLoading()
                         is ApodUiState.Success -> showData(uiState.data)
-                        is ApodUiState.Error -> showErrorMessage()
+                        is ApodUiState.Error -> showErrorMessage(uiState.exception)
                     }
                 }
             }
@@ -107,8 +116,8 @@ class ApodFragment : Fragment(), MenuProvider {
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
         when (menuItem.itemId) {
             R.id.share -> {
-                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show()
                 // TODO
+                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show()
                 true
             }
             else -> false
@@ -131,21 +140,43 @@ class ApodFragment : Fragment(), MenuProvider {
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .duration = 300
 
-            Picasso.get()
-                .load(apod.url)
-                .error(R.drawable.ic_image_error_placeholder_24)
-                .apply {
-                    fetch(object : Callback {
-                        override fun onSuccess() {
-                            viewModel.isImageLoaded = true
-                        }
+            when (apod.mediaType) {
+                MediaType.IMAGE -> {
+                    placeholderImageView.visibility = View.GONE
+                    imageView.visibility = View.VISIBLE
+                    Picasso.get()
+                        .load(apod.url)
+                        .apply {
+                            fetch(object : Callback {
+                                override fun onSuccess() {
+                                }
 
-                        override fun onError(e: Exception?) {
-                            viewModel.isImageLoaded = false
+                                override fun onError(e: Exception?) {
+                                    imageView.visibility = View.GONE
+                                    placeholderImageView.apply {
+                                        visibility = View.VISIBLE
+                                        setImageResource(R.drawable.ic_error_image_placeholder_24)
+                                    }
+                                }
+                            })
                         }
-                    })
+                        .into(imageView)
                 }
-                .into(imageView)
+                MediaType.VIDEO -> {
+                    imageView.visibility = View.GONE
+                    placeholderImageView.apply {
+                        visibility = View.VISIBLE
+                        setImageResource(R.drawable.ic_video_placeholder_24)
+                    }
+                }
+                MediaType.UNKNOWN -> {
+                    imageView.visibility = View.GONE
+                    placeholderImageView.apply {
+                        visibility = View.VISIBLE
+                        setImageResource(R.drawable.ic_unknow_media_placeholder_24)
+                    }
+                }
+            }
             dateTextView.text = formatDate(
                 apod.date,
                 getString(R.string.date_format_pattern),
@@ -162,7 +193,8 @@ class ApodFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun showErrorMessage() {
+    private fun showErrorMessage(exception: Throwable) {
+        Log.e(LOG_TAG, "showErrorMessage()", exception)
         binding.apply {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false

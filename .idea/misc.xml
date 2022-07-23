@@ -5,12 +5,17 @@
       <map>
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_download_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_media_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_outline_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_home_24.xml" value="0.121" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_image_error_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_image_placeholder_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_media_error_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_nasa_logo.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_new_item_label_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_random_24.xml" value="0.121" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_unknow_media_placeholder_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_video_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/error_layout.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_apod.xml" value="0.22826086956521738" />

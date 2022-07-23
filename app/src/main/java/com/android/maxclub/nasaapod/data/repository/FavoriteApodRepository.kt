@@ -1,5 +1,7 @@
-package com.android.maxclub.nasaapod.data
+package com.android.maxclub.nasaapod.data.repository
 
+import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.data.FavoriteApod
 import com.android.maxclub.nasaapod.data.source.local.IFavoriteApodLocalDataSource
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -27,9 +29,10 @@ class FavoriteApodRepository @Inject constructor(
 
     private fun apodToFavoriteApod(apod: Apod): FavoriteApod =
         FavoriteApod(
-            url = apod.url,
-            title = apod.title,
             date = apod.date,
+            mediaType = apod.mediaType,
+            title = apod.title,
+            url = apod.url,
             copyright = apod.copyright,
         )
 }

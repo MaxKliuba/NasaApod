@@ -3,7 +3,7 @@ package com.android.maxclub.nasaapod.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.maxclub.nasaapod.data.ApodDate
-import com.android.maxclub.nasaapod.data.ApodDateRepository
+import com.android.maxclub.nasaapod.data.repository.ApodDateRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

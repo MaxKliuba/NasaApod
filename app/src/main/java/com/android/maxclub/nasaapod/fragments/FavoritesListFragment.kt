@@ -1,6 +1,7 @@
 package com.android.maxclub.nasaapod.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,8 @@ import com.android.maxclub.nasaapod.uistates.FavoriteListUiState
 import com.android.maxclub.nasaapod.viewmodels.FavoriteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+
+private const val LOG_TAG = "ApodFragment"
 
 @AndroidEntryPoint
 class FavoritesListFragment : Fragment() {
@@ -69,7 +72,7 @@ class FavoritesListFragment : Fragment() {
                         is FavoriteListUiState.Initializing -> viewModel.fetchFavoriteApods()
                         is FavoriteListUiState.Loading -> showLoading()
                         is FavoriteListUiState.Success -> showData(uiState.data)
-                        is FavoriteListUiState.Error -> showErrorMessage()
+                        is FavoriteListUiState.Error -> showErrorMessage(uiState.exception)
                     }
                 }
             }
@@ -82,11 +85,6 @@ class FavoritesListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//
-//    }
 
     private fun showLoading() {
         binding.apply {
@@ -115,7 +113,8 @@ class FavoritesListFragment : Fragment() {
         }
     }
 
-    private fun showErrorMessage() {
+    private fun showErrorMessage(exception: Throwable) {
+        Log.e(LOG_TAG, "showErrorMessage()", exception)
         binding.apply {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false

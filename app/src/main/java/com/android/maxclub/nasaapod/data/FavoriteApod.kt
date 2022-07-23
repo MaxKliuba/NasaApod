@@ -7,14 +7,17 @@ import java.util.*
 
 @Entity(tableName = "favorite_apod_table")
 data class FavoriteApod(
-    @ColumnInfo(name = "url")
-    val url: String? = null,
-
-    @ColumnInfo(name = "title")
-    val title: String? = null,
-
     @ColumnInfo(name = "date")
     @PrimaryKey val date: Date,
+
+    @ColumnInfo(name = "media_type")
+    val mediaType: MediaType,
+
+    @ColumnInfo(name = "title")
+    val title: String,
+
+    @ColumnInfo(name = "url")
+    val url: String,
 
     @ColumnInfo(name = "copyright")
     val copyright: String? = null,

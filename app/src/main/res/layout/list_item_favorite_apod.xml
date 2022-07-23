@@ -33,12 +33,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Test Title" />
@@ -49,9 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toBottomOf="@+id/title_text_view"
         tools:text="July 12, 2022" />
@@ -62,24 +64,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_disabled"
-        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toBottomOf="@+id/date_text_view"
         tools:text="© Max Kliuba" />
 
     <ImageView
         android:id="@+id/new_item_label"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/new_item_label_description"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_new_item_label_24" />
+        app:srcCompat="@drawable/ic_new_item_label_24"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
