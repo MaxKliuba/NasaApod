@@ -30,7 +30,7 @@
         android:label="fragment_favorites_view_pager"
         tools:layout="@layout/fragment_favorites_view_pager" >
         <argument
-            android:name="date"
-            app:argType="java.util.Date" />
+            android:name="favoriteApod"
+            app:argType="com.android.maxclub.nasaapod.data.FavoriteApod" />
     </fragment>
 </navigation>

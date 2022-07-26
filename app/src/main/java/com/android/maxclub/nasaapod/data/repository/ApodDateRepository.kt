@@ -9,28 +9,24 @@ import javax.inject.Singleton
 
 @Singleton
 class ApodDateRepository @Inject constructor() {
-    private val apodDates = MutableStateFlow<Set<ApodDate>>(setOf(ApodDate.Today()))
+    private val apodDates = MutableStateFlow<List<ApodDate>>(listOf(ApodDate.Today()))
     private var lastLoadedDate = MutableStateFlow<Date?>(null)
 
-    fun getApodDates(): Flow<Set<ApodDate>> = apodDates
+    fun getApodDates(): Flow<List<ApodDate>> = apodDates
 
     fun addNewApodDate(newDate: ApodDate) {
         apodDates.value += newDate
     }
 
     fun replaceAllWithNewApodDate(newDate: ApodDate) {
-        apodDates.value = setOf(newDate)
+        apodDates.value = listOf(newDate)
         updateLastLoadedDate(null)
     }
 
     fun updateApodDate(apodDate: ApodDate) {
         apodDates.value = apodDates.value.map {
-            if (it.id == apodDate.id) {
-                apodDate
-            } else {
-                it
-            }
-        }.toSet()
+            if (it.id == apodDate.id) apodDate else it
+        }
     }
 
     fun getLastLoadedDate(): Flow<Date?> = lastLoadedDate

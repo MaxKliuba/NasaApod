@@ -67,7 +67,7 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.lastLoadedDate.collect { currentDate ->
                         currentDate?.let { date ->
-                            val position = viewModel.currentPosition
+                            val position = binding.viewPager.currentItem
                             if (position == 0) {
                                 val prevDate = getPrevDate(date)
                                 viewModel.addNewApodDate(ApodDate.From(prevDate))
@@ -80,6 +80,7 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
                     }
                 }
             }
+
         }
 
         return binding.root

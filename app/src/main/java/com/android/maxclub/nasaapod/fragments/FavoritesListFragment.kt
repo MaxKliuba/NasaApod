@@ -7,12 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.FavoritesAdapter
@@ -24,7 +25,7 @@ import com.android.maxclub.nasaapod.viewmodels.FavoriteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-private const val LOG_TAG = "ApodFragment"
+private const val LOG_TAG = "FavoritesListFragment"
 
 @AndroidEntryPoint
 class FavoritesListFragment : Fragment() {
@@ -33,6 +34,7 @@ class FavoritesListFragment : Fragment() {
     private var _binding: FragmentFavoritesListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var navController: NavController
     private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreateView(
@@ -40,6 +42,8 @@ class FavoritesListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesListBinding.inflate(inflater, container, false)
+
+        navController = findNavController()
 
         binding.apply {
             swipeRefreshLayout.apply {
@@ -56,9 +60,11 @@ class FavoritesListFragment : Fragment() {
             favoritesRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = FavoritesAdapter(FavoritesDiffCallback()) { favoriteApod ->
-                    // TODO
-                    viewModel.unmarkAsNewFavoriteApod(favoriteApod)
-                    Toast.makeText(context, favoriteApod.title, Toast.LENGTH_SHORT).show()
+                    val directions =
+                        FavoritesListFragmentDirections.actionFavoritesListFragmentToFavoritesViewPagerFragment(
+                            favoriteApod
+                        )
+                    navController.navigate(directions)
                 }.also { adapter ->
                     favoritesAdapter = adapter
                 }

@@ -3,6 +3,7 @@ package com.android.maxclub.nasaapod.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 import java.util.*
 
 @Entity(tableName = "favorite_apod_table")
@@ -27,4 +28,4 @@ data class FavoriteApod(
 
     @ColumnInfo(name = "is_new")
     val isNew: Boolean = true,
-)
+) : Serializable

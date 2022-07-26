@@ -36,11 +36,6 @@ class FavoriteListViewModel @Inject constructor(
         }
     }
 
-    fun unmarkAsNewFavoriteApod(favoriteApod: FavoriteApod) =
-        updateFavoriteApod(
-            favoriteApod.copy(isNew = false)
-        )
-
     private fun updateFavoriteApod(favoriteApod: FavoriteApod) =
         viewModelScope.launch {
             favoriteApodRepository.updateFavoriteApod(favoriteApod)

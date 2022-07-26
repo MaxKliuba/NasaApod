@@ -78,8 +78,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                if (binding.tabLayout.tag != false && tab.position == HOME_TAB_INDEX) {
-                    viewModel.replaceAllWithNewApodDate(ApodDate.Today())
+                if (binding.tabLayout.tag != false) {
+                    when (tab.position) {
+                        HOME_TAB_INDEX -> viewModel.replaceAllWithNewApodDate(ApodDate.Today())
+                        FAVORITES_TAB_INDEX -> navController.popBackStack(
+                            R.id.favorites_list_fragment,
+                            false
+                        )
+                    }
                 }
             }
 

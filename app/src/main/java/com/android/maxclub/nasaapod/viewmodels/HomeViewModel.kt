@@ -26,7 +26,7 @@ class HomeViewModel @Inject constructor(
             launch {
                 apodDateRepository.getApodDates()
                     .collect { apodDates ->
-                        _apodDates.value = apodDates.toList().sortedBy { it.date }
+                        _apodDates.value = apodDates
                     }
             }
 
@@ -36,7 +36,6 @@ class HomeViewModel @Inject constructor(
                         _lastLoadedDate.value = date
                     }
             }
-
         }
     }
 
