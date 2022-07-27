@@ -8,6 +8,7 @@
     <string name="random_date_item_title">Random date</string>
     <string name="select_date_item_title">Select a date</string>
     <string name="share_item_title">Share</string>
+    <string name="share_error_message">Nothing to share</string>
     <string name="date_format_pattern">MMMM dd, yyyy</string>
     <string name="copyright_placeholder">© %1$s</string>
     <string name="error_message">Oops, something went wrong</string>

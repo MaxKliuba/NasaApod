@@ -1,5 +1,6 @@
 package com.android.maxclub.nasaapod.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -116,9 +117,13 @@ class ApodFragment : Fragment(), MenuProvider {
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
         when (menuItem.itemId) {
             R.id.share -> {
-                // TODO
-                Toast.makeText(context, "Share", Toast.LENGTH_SHORT).show()
-                true
+                if (viewModel.currentApod != null) {
+                    shareApod(viewModel.currentApod!!)
+                    true
+                } else {
+                    Toast.makeText(context, R.string.share_error_message, Toast.LENGTH_SHORT).show()
+                    false
+                }
             }
             else -> false
         }
@@ -199,6 +204,39 @@ class ApodFragment : Fragment(), MenuProvider {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false
             errorLayout.root.isVisible = true
+        }
+    }
+
+    private fun shareApod(apod: Apod) {
+        val subject = "${getString(R.string.app_name)} - ${apod.title}"
+        val text = """
+                |${apod.title}
+                |
+                |${
+            formatDate(
+                apod.date,
+                getString(R.string.date_format_pattern),
+                Locale(getString(R.string.language), getString(R.string.country))
+            )
+        }
+                |
+                |${apod.explanation}
+                |${
+            apod.copyright?.let { copyright ->
+                "\n${getString(R.string.copyright_placeholder, copyright)}\n"
+            } ?: ""
+        }
+                |${apod.url}
+        """.trimMargin()
+
+        Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, text)
+        }.let { intent ->
+            Intent.createChooser(intent, null)
+        }.also { chooserIntent ->
+            startActivity(chooserIntent)
         }
     }
 
