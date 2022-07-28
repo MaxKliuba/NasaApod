@@ -11,14 +11,16 @@ data class Apod(
     @Serializable(with = DateSerializer::class)
     @SerialName("date") val date: Date,
 
+    @SerialName("title") val title: String,
+
     @SerialName("explanation") val explanation: String,
 
     @Serializable(with = MediaTypeSerializer::class)
     @SerialName("media_type") val mediaType: MediaType,
 
-    @SerialName("title") val title: String,
-
     @SerialName("url") val url: String,
+
+    @SerialName("hdurl") val hdUrl: String? = null,
 
     @SerialName("copyright") val copyright: String? = null,
 

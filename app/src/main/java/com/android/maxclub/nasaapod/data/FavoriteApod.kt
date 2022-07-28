@@ -11,11 +11,11 @@ data class FavoriteApod(
     @ColumnInfo(name = "date")
     @PrimaryKey val date: Date,
 
-    @ColumnInfo(name = "media_type")
-    val mediaType: MediaType,
-
     @ColumnInfo(name = "title")
     val title: String,
+
+    @ColumnInfo(name = "media_type")
+    val mediaType: MediaType,
 
     @ColumnInfo(name = "url")
     val url: String,

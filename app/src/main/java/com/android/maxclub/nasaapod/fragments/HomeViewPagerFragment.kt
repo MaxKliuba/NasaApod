@@ -39,6 +39,9 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
     ): View {
         _binding = FragmentHomeViewPagerBinding.inflate(inflater, container, false)
 
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
+
         pagerAdapter = HomeApodPagerAdapter(this, viewModel.apodDates.value)
         binding.viewPager.apply {
             adapter = pagerAdapter
@@ -50,9 +53,6 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
                 }
             })
         }
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
 
         lifecycleScope.launch {
             launch {

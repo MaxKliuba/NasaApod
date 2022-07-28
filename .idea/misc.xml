@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable-v24/ic_error_full_image_placeholder_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable-v24/ic_full_image_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.121" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_arrow_back_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_download_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_image_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_media_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_error_outline_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_home_24.xml" value="0.121" />
@@ -16,6 +20,8 @@
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_random_24.xml" value="0.121" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_unknow_media_placeholder_24.xml" value="0.1485" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/ic_video_placeholder_24.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/drawable/toolbar_background.xml" value="0.1485" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/activity_image.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/error_layout.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/fragment_apod.xml" value="0.22826086956521738" />
@@ -26,6 +32,7 @@
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_favorite_apod.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_new_favorite_apod.xml" value="0.22826086956521738" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/layout/list_item_old_favorite_apod.xml" value="0.22826086956521738" />
+        <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/activity_image.xml" value="0.25" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/fragment_apod.xml" value="0.25" />
         <entry key="..\:/AndroidProjects/NasaApod/app/src/main/res/menu/fragment_home_view_pager.xml" value="0.25" />
       </map>

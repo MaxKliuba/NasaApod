@@ -7,6 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -15,10 +16,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.android.maxclub.nasaapod.ImageActivity
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentApodBinding
 import com.android.maxclub.nasaapod.data.Apod
 import com.android.maxclub.nasaapod.data.ApodDate
+import com.android.maxclub.nasaapod.data.ImageInfo
 import com.android.maxclub.nasaapod.data.MediaType
 import com.android.maxclub.nasaapod.uistates.ApodUiState
 import com.android.maxclub.nasaapod.utils.formatDate
@@ -51,6 +54,9 @@ class ApodFragment : Fragment(), MenuProvider {
     ): View {
         _binding = FragmentApodBinding.inflate(inflater, container, false)
 
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         binding.apply {
             swipeRefreshLayout.apply {
                 setColorSchemeResources(R.color.color_primary)
@@ -63,18 +69,34 @@ class ApodFragment : Fragment(), MenuProvider {
             errorLayout.retryButton.setOnClickListener {
                 viewModel.refreshCurrentApod()
             }
+
             imageView.setOnClickListener {
-                // TODO
-                Toast.makeText(context, "Open picture", Toast.LENGTH_SHORT).show()
+                viewModel.currentApod?.let { apod ->
+                    val imageInfo = ImageInfo(
+                        date = apod.date,
+                        title = apod.title,
+                        url = apod.url,
+                        copyright = apod.copyright
+                    )
+                    ImageActivity.newIntent(requireContext(), imageInfo)
+                        .also { intent ->
+                            startActivity(intent)
+                        }
+                } ?: Toast.makeText(context, R.string.show_error_message, Toast.LENGTH_SHORT).show()
             }
             placeholderImageView.setOnClickListener {
-                viewModel.currentApod?.mediaType?.let { mediaType ->
-                    if (mediaType == MediaType.VIDEO) {
-                        // TODO
-                        Toast.makeText(context, "Open video", Toast.LENGTH_SHORT).show()
+                viewModel.currentApod.let { apod ->
+                    if (apod != null && apod.mediaType == MediaType.VIDEO) {
+                        Intent(Intent.ACTION_VIEW, apod.url.toUri()).also { intent ->
+                            startActivity(intent)
+                        }
+                    } else {
+                        Toast.makeText(context, R.string.show_error_message, Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
+
             favoriteFab.setOnClickListener {
                 viewModel.currentApod?.let { apod ->
                     if (apod.isFavorite) {
@@ -85,9 +107,6 @@ class ApodFragment : Fragment(), MenuProvider {
                 }
             }
         }
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

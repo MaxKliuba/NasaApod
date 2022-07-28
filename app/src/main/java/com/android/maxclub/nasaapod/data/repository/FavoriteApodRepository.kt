@@ -30,8 +30,8 @@ class FavoriteApodRepository @Inject constructor(
     private fun apodToFavoriteApod(apod: Apod): FavoriteApod =
         FavoriteApod(
             date = apod.date,
-            mediaType = apod.mediaType,
             title = apod.title,
+            mediaType = apod.mediaType,
             url = apod.url,
             copyright = apod.copyright,
         )
