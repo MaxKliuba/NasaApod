@@ -2,19 +2,21 @@ package com.android.maxclub.nasaapod.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.FavoritesAdapter
 import com.android.maxclub.nasaapod.adapters.FavoritesDiffCallback
@@ -68,6 +70,8 @@ class FavoritesListFragment : Fragment() {
                 }.also { adapter ->
                     favoritesAdapter = adapter
                 }
+            }.also { recyclerView ->
+                ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView)
             }
         }
 
@@ -125,6 +129,55 @@ class FavoritesListFragment : Fragment() {
             contentLayout.alpha = 0.0f
             progressIndicator.isVisible = false
             errorLayout.root.isVisible = false
+        }
+    }
+
+    private val itemTouchHelperCallback = object :
+        ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or
+                    ItemTouchHelper.DOWN,
+            0
+        ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            val fromItem = favoritesAdapter.currentList[viewHolder.adapterPosition]
+            val toItem = favoritesAdapter.currentList[target.adapterPosition]
+            val fromPosition = fromItem.position
+            val toPosition = toItem.position
+            val newList = favoritesAdapter.currentList.map { favoriteApod ->
+                when (favoriteApod) {
+                    fromItem -> fromItem.copy(position = toPosition)
+                    toItem -> toItem.copy(position = fromPosition)
+                    else -> favoriteApod
+                }
+            }
+            viewModel.updateUiStateFavoriteApods(newList)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                binding.swipeRefreshLayout.isEnabled = false
+                (viewHolder as? FavoritesAdapter.FavoriteApodViewHolder)?.isDragging = true
+            }
+        }
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            (viewHolder as? FavoritesAdapter.FavoriteApodViewHolder)?.apply {
+                if (isDragging) {
+                    _binding?.swipeRefreshLayout?.isEnabled = true
+                    isDragging = false
+                    viewModel.updateFavoriteApods(*favoritesAdapter.currentList.toTypedArray())
+                }
+            }
         }
     }
 }

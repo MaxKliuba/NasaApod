@@ -14,11 +14,11 @@ interface FavoriteApodDao {
     fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertFavoriteApod(favoriteApod: FavoriteApod): Long
+    suspend fun insertFavoriteApods(vararg favoriteApods: FavoriteApod): LongArray
 
     @Update
-    suspend fun updateFavoriteApod(favoriteApod: FavoriteApod): Int
+    suspend fun updateFavoriteApods(vararg favoriteApods: FavoriteApod): Int
 
     @Delete
-    suspend fun deleteFavoriteApod(favoriteApod: FavoriteApod): Int
+    suspend fun deleteFavoriteApods(vararg favoriteApods: FavoriteApod): Int
 }

@@ -40,7 +40,7 @@ abstract class FavoriteApodDatabase : RoomDatabase() {
                         BEGIN
                             UPDATE favorite_apod_table 
                             SET `position` = (SELECT MAX(`position`) + 1 FROM favorite_apod_table) 
-                            WHERE date = NEW.date;
+                            WHERE `date` = NEW.date AND `position` = -1;
                         END;
                     """.trimIndent()
                 )

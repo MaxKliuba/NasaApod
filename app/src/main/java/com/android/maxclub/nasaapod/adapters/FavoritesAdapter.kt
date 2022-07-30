@@ -38,11 +38,28 @@ class FavoritesAdapter(
     override fun onBindViewHolder(holder: FavoriteApodViewHolder, position: Int) =
         holder.bind(getItem(position))
 
+    override fun onBindViewHolder(
+        holder: FavoriteApodViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty() && payloads[0] == true) {
+            // Nothing
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
     class FavoriteApodViewHolder(
         private val binding: ListItemFavoriteApodBinding,
         onClick: (FavoriteApod) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         private lateinit var currentFavoriteApod: FavoriteApod
+        var isDragging: Boolean = false
+            set(value) {
+                field = value
+                binding.dragIndicator.isVisible = value
+            }
 
         init {
             binding.root.setOnClickListener {
@@ -89,4 +106,7 @@ class FavoritesDiffCallback : DiffUtil.ItemCallback<FavoriteApod>() {
 
     override fun areContentsTheSame(oldItem: FavoriteApod, newItem: FavoriteApod): Boolean =
         oldItem == newItem
+
+    override fun getChangePayload(oldItem: FavoriteApod, newItem: FavoriteApod): Any? =
+        if (oldItem.position != newItem.position) true else null
 }

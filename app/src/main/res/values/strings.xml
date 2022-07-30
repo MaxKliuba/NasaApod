@@ -19,4 +19,5 @@
     <string name="download_item_title">Save to Gallery</string>
     <string name="downloaded_successfully_message">Saved to Gallery</string>
     <string name="download_error_message">Nothing to save</string>
+    <string name="drag_indicator_description">Drag indicator</string>
 </resources>

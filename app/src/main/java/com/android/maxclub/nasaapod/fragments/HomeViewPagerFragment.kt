@@ -55,32 +55,30 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
         }
 
         lifecycleScope.launch {
-            launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.apodDates.collect { apodDates ->
-                        pagerAdapter.submitList(apodDates)
-                    }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.apodDates.collect { apodDates ->
+                    pagerAdapter.submitList(apodDates)
                 }
             }
-
-            launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.lastLoadedDate.collect { currentDate ->
-                        currentDate?.let { date ->
-                            val position = binding.viewPager.currentItem
-                            if (position == 0) {
-                                val prevDate = getPrevDate(date)
-                                viewModel.addNewApodDate(ApodDate.From(prevDate))
-                            }
-                            if (position == pagerAdapter.itemCount - 1) {
-                                val nextDate = getNextDate(date)
-                                viewModel.addNewApodDate(ApodDate.From(nextDate))
-                            }
+        }
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.lastLoadedDate.collect { currentDate ->
+                    currentDate?.let { date ->
+                        val position = pagerAdapter.currentList.indexOfFirst { apodDate ->
+                            apodDate.date == currentDate
+                        }
+                        if (position == 0) {
+                            val prevDate = getPrevDate(date)
+                            viewModel.addNewApodDate(ApodDate.From(prevDate))
+                        }
+                        if (position == pagerAdapter.itemCount - 1) {
+                            val nextDate = getNextDate(date)
+                            viewModel.addNewApodDate(ApodDate.From(nextDate))
                         }
                     }
                 }
             }
-
         }
 
         return binding.root

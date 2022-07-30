@@ -54,21 +54,23 @@ class FavoritesViewPagerFragment : Fragment() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     viewModel.currentPosition = position
-                    viewModel.unmarkAsNewFavoriteApod(pagerAdapter.currentList[position])
+                    pagerAdapter.currentList[position].let { favoriteApod ->
+                        if (favoriteApod.isNew) {
+                            viewModel.unmarkAsNewFavoriteApod(favoriteApod)
+                        }
+                    }
                 }
             })
         }
 
         lifecycleScope.launch {
-            launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.uiState.collect { uiState ->
-                        if (uiState is FavoritesViewPagerUiState.DataChanged) {
-                            if (uiState.data.isEmpty()) {
-                                navController.popBackStack()
-                            } else {
-                                pagerAdapter.submitList(uiState.data)
-                            }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    if (uiState is FavoritesViewPagerUiState.DataChanged) {
+                        if (uiState.data.isEmpty()) {
+                            navController.popBackStack()
+                        } else {
+                            pagerAdapter.submitList(uiState.data)
                         }
                     }
                 }

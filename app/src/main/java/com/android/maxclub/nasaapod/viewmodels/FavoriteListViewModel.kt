@@ -36,8 +36,12 @@ class FavoriteListViewModel @Inject constructor(
         }
     }
 
-    private fun updateFavoriteApod(favoriteApod: FavoriteApod) =
+    fun updateUiStateFavoriteApods(favoriteApods: List<FavoriteApod>) {
+        _uiState.value = FavoriteListUiState.Success(favoriteApods)
+    }
+
+    fun updateFavoriteApods(vararg favoriteApods: FavoriteApod) =
         viewModelScope.launch {
-            favoriteApodRepository.updateFavoriteApod(favoriteApod)
+            favoriteApodRepository.updateFavoriteApods(*favoriteApods)
         }
 }

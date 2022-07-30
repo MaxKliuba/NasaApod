@@ -19,18 +19,18 @@ class FavoriteApodLocalDataSource @Inject constructor(
         favoriteApodDao.getFavoriteApodByDate(date)
             .flowOn(Dispatchers.IO)
 
-    override suspend fun insertFavoriteApod(favoriteApod: FavoriteApod): Boolean =
+    override suspend fun insertFavoriteApods(vararg favoriteApods: FavoriteApod): Boolean =
         withContext(Dispatchers.IO) {
-            favoriteApodDao.insertFavoriteApod(favoriteApod) > 0
+            favoriteApodDao.insertFavoriteApods(*favoriteApods).isNotEmpty()
         }
 
-    override suspend fun updateFavoriteApod(favoriteApod: FavoriteApod): Boolean =
+    override suspend fun updateFavoriteApods(vararg favoriteApods: FavoriteApod): Boolean =
         withContext(Dispatchers.IO) {
-            favoriteApodDao.updateFavoriteApod(favoriteApod) > 0
+            favoriteApodDao.updateFavoriteApods(*favoriteApods) > 0
         }
 
-    override suspend fun deleteFavoriteApod(favoriteApod: FavoriteApod): Boolean =
+    override suspend fun deleteFavoriteApods(vararg favoriteApods: FavoriteApod): Boolean =
         withContext(Dispatchers.IO) {
-            favoriteApodDao.deleteFavoriteApod(favoriteApod) > 0
+            favoriteApodDao.deleteFavoriteApods(*favoriteApods) > 0
         }
 }

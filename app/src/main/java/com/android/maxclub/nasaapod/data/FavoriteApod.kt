@@ -23,9 +23,9 @@ data class FavoriteApod(
     @ColumnInfo(name = "copyright")
     val copyright: String? = null,
 
-    @ColumnInfo(name = "position")
-    val position: Int = -1,
-
     @ColumnInfo(name = "is_new")
     val isNew: Boolean = true,
+
+    @ColumnInfo(name = "position")
+    val position: Int = -1,
 ) : Serializable

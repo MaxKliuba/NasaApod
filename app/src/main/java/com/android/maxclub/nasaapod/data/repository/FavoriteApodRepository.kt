@@ -19,13 +19,13 @@ class FavoriteApodRepository @Inject constructor(
         favoriteApodLocalDataSource.getFavoriteApodByDate(date)
 
     suspend fun addApodToFavorites(apod: Apod): Boolean =
-        favoriteApodLocalDataSource.insertFavoriteApod(apodToFavoriteApod(apod))
+        favoriteApodLocalDataSource.insertFavoriteApods(apodToFavoriteApod(apod))
 
     suspend fun removeApodFromFavorites(apod: Apod): Boolean =
-        favoriteApodLocalDataSource.deleteFavoriteApod(apodToFavoriteApod(apod))
+        favoriteApodLocalDataSource.deleteFavoriteApods(apodToFavoriteApod(apod))
 
-    suspend fun updateFavoriteApod(favoriteApod: FavoriteApod) =
-        favoriteApodLocalDataSource.updateFavoriteApod(favoriteApod)
+    suspend fun updateFavoriteApods(vararg favoriteApods: FavoriteApod) =
+        favoriteApodLocalDataSource.updateFavoriteApods(*favoriteApods)
 
     private fun apodToFavoriteApod(apod: Apod): FavoriteApod =
         FavoriteApod(

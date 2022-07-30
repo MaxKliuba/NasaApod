@@ -3,19 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@color/color_background">
+
+    <ImageView
+        android:id="@+id/drag_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/drag_indicator_description"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_drag_indicator_24"
+        tools:visibility="visible" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/image_card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:backgroundTint="@color/color_background"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/drag_indicator"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -32,14 +47,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Test Title" />
@@ -53,7 +67,7 @@
         android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toBottomOf="@+id/title_text_view"
         tools:text="July 12, 2022" />
@@ -68,20 +82,18 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/color_disabled"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/new_item_label"
         app:layout_constraintStart_toEndOf="@+id/image_card_view"
         app:layout_constraintTop_toBottomOf="@+id/date_text_view"
         tools:text="© Max Kliuba" />
 
     <ImageView
         android:id="@+id/new_item_label"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:contentDescription="@string/new_item_label_description"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
