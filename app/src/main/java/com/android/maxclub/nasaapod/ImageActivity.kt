@@ -86,6 +86,7 @@ class ImageActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.downloaded_successfully_message, Toast.LENGTH_SHORT)
                 .show()
         } ?: Toast.makeText(this, R.string.download_error_message, Toast.LENGTH_SHORT).show()
+
     }
 
     companion object {

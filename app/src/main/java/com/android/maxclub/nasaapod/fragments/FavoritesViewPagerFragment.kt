@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.android.maxclub.nasaapod.adapters.FavoritesApodPagerAdapter
 import com.android.maxclub.nasaapod.databinding.FragmentFavoritesViewPagerBinding
-import com.android.maxclub.nasaapod.uistates.FavoritesViewPagerUiState
+import com.android.maxclub.nasaapod.uistates.FavoritesUiState
 import com.android.maxclub.nasaapod.viewmodels.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,8 +41,8 @@ class FavoritesViewPagerFragment : Fragment() {
 
         val initialList = viewModel.uiState.value.let { uiState ->
             when (uiState) {
-                is FavoritesViewPagerUiState.Initializing -> listOf(args.favoriteApod)
-                is FavoritesViewPagerUiState.DataChanged -> uiState.data
+                is FavoritesUiState.Initializing -> listOf(args.favoriteApod)
+                is FavoritesUiState.DataChanged -> uiState.favoriteApods
             }
         }
         pagerAdapter =
@@ -66,11 +66,11 @@ class FavoritesViewPagerFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    if (uiState is FavoritesViewPagerUiState.DataChanged) {
-                        if (uiState.data.isEmpty()) {
+                    if (uiState is FavoritesUiState.DataChanged) {
+                        if (uiState.favoriteApods.isEmpty()) {
                             navController.popBackStack()
                         } else {
-                            pagerAdapter.submitList(uiState.data)
+                            pagerAdapter.submitList(uiState.favoriteApods)
                         }
                     }
                 }

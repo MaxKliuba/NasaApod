@@ -80,7 +80,6 @@ class FavoritesAdapter(
                         .error(R.drawable.ic_error_image_placeholder_24)
                         .into(imageView)
                     MediaType.VIDEO -> imageView.setImageResource(R.drawable.ic_video_placeholder_24)
-                    MediaType.UNKNOWN -> imageView.setImageResource(R.drawable.ic_unknow_media_placeholder_24)
                 }
                 titleTextView.text = favoriteApod.title
                 dateTextView.text = formatDate(

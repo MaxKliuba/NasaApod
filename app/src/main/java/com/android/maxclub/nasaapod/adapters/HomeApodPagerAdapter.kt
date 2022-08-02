@@ -25,11 +25,10 @@ class HomeApodPagerAdapter(
         _currentList.any { it.id.leastSignificantBits == itemId }
 
     fun submitList(newList: List<ApodDate>) {
-        val sortedList = newList.sortedBy { it.date }
-        val callback = HomeApodPagerDiffUtil(_currentList, sortedList)
+        val callback = HomeApodPagerDiffUtil(_currentList, newList)
         val diff = DiffUtil.calculateDiff(callback)
         _currentList.clear()
-        _currentList.addAll(sortedList)
+        _currentList.addAll(newList)
         diff.dispatchUpdatesTo(this)
     }
 }
@@ -45,6 +44,9 @@ class HomeApodPagerDiffUtil(
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
         oldList[oldItemPosition].id == newList[newItemPosition].id
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        oldList[oldItemPosition].date == newList[newItemPosition].date
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldList[oldItemPosition]
+        val newItem = newList[newItemPosition]
+        return oldItem is ApodDate.From && newItem is ApodDate.From && oldItem.date == newItem.date
+    }
 }

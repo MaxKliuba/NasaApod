@@ -3,9 +3,8 @@ package com.android.maxclub.nasaapod.adapters
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.fragments.ApodFragment
+import com.android.maxclub.nasaapod.fragments.FavoriteApodFragment
 
 class FavoritesApodPagerAdapter(
     fragment: Fragment,
@@ -17,7 +16,7 @@ class FavoritesApodPagerAdapter(
     override fun getItemCount(): Int = _currentList.size
 
     override fun createFragment(position: Int): Fragment =
-        ApodFragment.newInstance(ApodDate.From(_currentList[position].date))
+        FavoriteApodFragment.newInstance(_currentList[position])
 
     override fun getItemId(position: Int): Long =
         _currentList[position].date.time

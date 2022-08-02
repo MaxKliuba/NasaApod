@@ -2,8 +2,6 @@ package com.android.maxclub.nasaapod.fragments
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,8 +12,6 @@ import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.HomeApodPagerAdapter
 import com.android.maxclub.nasaapod.data.ApodDate
 import com.android.maxclub.nasaapod.databinding.FragmentHomeViewPagerBinding
-import com.android.maxclub.nasaapod.utils.getNextDate
-import com.android.maxclub.nasaapod.utils.getPrevDate
 import com.android.maxclub.nasaapod.viewmodels.HomeViewModel
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -25,7 +21,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @AndroidEntryPoint
-class HomeViewPagerFragment : Fragment(), MenuProvider {
+class HomeViewPagerFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
 
     private var _binding: FragmentHomeViewPagerBinding? = null
@@ -33,14 +29,16 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
 
     private lateinit var pagerAdapter: HomeApodPagerAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeViewPagerBinding.inflate(inflater, container, false)
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
 
         pagerAdapter = HomeApodPagerAdapter(this, viewModel.apodDates.value)
         binding.viewPager.apply {
@@ -61,25 +59,6 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
                 }
             }
         }
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.lastLoadedDate.collect { currentDate ->
-                    currentDate?.let { date ->
-                        val position = pagerAdapter.currentList.indexOfFirst { apodDate ->
-                            apodDate.date == currentDate
-                        }
-                        if (position == 0) {
-                            val prevDate = getPrevDate(date)
-                            viewModel.addNewApodDate(ApodDate.From(prevDate))
-                        }
-                        if (position == pagerAdapter.itemCount - 1) {
-                            val nextDate = getNextDate(date)
-                            viewModel.addNewApodDate(ApodDate.From(nextDate))
-                        }
-                    }
-                }
-            }
-        }
 
         return binding.root
     }
@@ -89,12 +68,15 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
         _binding = null
     }
 
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.fragment_home_view_pager, menu)
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.fragment_home_view_pager, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-        when (menuItem.itemId) {
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.random_date -> {
                 viewModel.replaceAllWithNewApodDate(ApodDate.Random())
                 true
@@ -103,8 +85,13 @@ class HomeViewPagerFragment : Fragment(), MenuProvider {
                 showDatePickerDialog()
                 true
             }
-            else -> false
+            else -> super.onOptionsItemSelected(item)
         }
+
+
+    fun resetViewPager() {
+        viewModel.resetApodDates()
+    }
 
     private fun showDatePickerDialog() {
         val constraint = CalendarConstraints.Builder()

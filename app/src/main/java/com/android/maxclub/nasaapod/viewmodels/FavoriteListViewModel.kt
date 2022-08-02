@@ -27,17 +27,17 @@ class FavoriteListViewModel @Inject constructor(
         fetchJob = viewModelScope.launch {
             favoriteApodRepository.getFavoriteApods()
                 .onStart {
-                    _uiState.value = FavoriteListUiState.Loading
-                }.catch { exception ->
-                    _uiState.value = FavoriteListUiState.Error(exception)
+                    _uiState.value = FavoriteListUiState.Loading(_uiState.value.favoriteApods)
+                }.catch {
+                    _uiState.value = FavoriteListUiState.DataChanged(_uiState.value.favoriteApods)
                 }.collect { favoriteApods ->
-                    _uiState.value = FavoriteListUiState.Success(favoriteApods)
+                    _uiState.value = FavoriteListUiState.DataChanged(favoriteApods)
                 }
         }
     }
 
     fun updateUiStateFavoriteApods(favoriteApods: List<FavoriteApod>) {
-        _uiState.value = FavoriteListUiState.Success(favoriteApods)
+        _uiState.value = FavoriteListUiState.DataChanged(favoriteApods)
     }
 
     fun updateFavoriteApods(vararg favoriteApods: FavoriteApod) =

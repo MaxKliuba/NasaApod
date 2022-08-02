@@ -8,6 +8,8 @@
     <color name="color_status_bar">#222222</color>
     <color name="color_background">@color/black</color>
     <color name="color_on_background">@color/white</color>
+    <color name="color_snackbar">#222222</color>
+    <color name="color_on_snackbar">@color/white</color>
     <color name="color_disabled">#727272</color>
     <color name="color_new_item_label">#CC6977</color>
 </resources>

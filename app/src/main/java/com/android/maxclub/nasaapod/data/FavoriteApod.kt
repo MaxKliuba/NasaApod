@@ -20,6 +20,9 @@ data class FavoriteApod(
     @ColumnInfo(name = "url")
     val url: String,
 
+    @ColumnInfo(name = "hdurl")
+    val hdUrl: String? = null,
+
     @ColumnInfo(name = "copyright")
     val copyright: String? = null,
 
@@ -28,4 +31,16 @@ data class FavoriteApod(
 
     @ColumnInfo(name = "position")
     val position: Int = -1,
-) : Serializable
+) : Serializable {
+    fun toApod(): Apod =
+        Apod(
+            date = date,
+            title = title,
+            explanation = "",
+            mediaType = mediaType,
+            url = url,
+            hdUrl = hdUrl,
+            copyright = copyright,
+            isFavorite = true,
+        )
+}

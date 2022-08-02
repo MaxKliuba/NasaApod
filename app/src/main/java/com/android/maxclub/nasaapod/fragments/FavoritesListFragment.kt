@@ -1,7 +1,6 @@
 package com.android.maxclub.nasaapod.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.adapters.FavoritesAdapter
 import com.android.maxclub.nasaapod.adapters.FavoritesDiffCallback
 import com.android.maxclub.nasaapod.data.FavoriteApod
@@ -26,8 +24,6 @@ import com.android.maxclub.nasaapod.uistates.FavoriteListUiState
 import com.android.maxclub.nasaapod.viewmodels.FavoriteListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
-private const val LOG_TAG = "FavoritesListFragment"
 
 @AndroidEntryPoint
 class FavoritesListFragment : Fragment() {
@@ -48,17 +44,6 @@ class FavoritesListFragment : Fragment() {
         navController = findNavController()
 
         binding.apply {
-            swipeRefreshLayout.apply {
-                setColorSchemeResources(R.color.color_primary)
-                setProgressBackgroundColorSchemeResource(R.color.color_action_bar)
-                setOnRefreshListener {
-                    isRefreshing = false
-                    viewModel.fetchFavoriteApods()
-                }
-            }
-            errorLayout.retryButton.setOnClickListener {
-                viewModel.fetchFavoriteApods()
-            }
             favoritesRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = FavoritesAdapter(FavoritesDiffCallback()) { favoriteApod ->
@@ -81,8 +66,7 @@ class FavoritesListFragment : Fragment() {
                     when (uiState) {
                         is FavoriteListUiState.Initializing -> viewModel.fetchFavoriteApods()
                         is FavoriteListUiState.Loading -> showLoading()
-                        is FavoriteListUiState.Success -> showData(uiState.data)
-                        is FavoriteListUiState.Error -> showErrorMessage(uiState.exception)
+                        is FavoriteListUiState.DataChanged -> showData(uiState.favoriteApods)
                     }
                 }
             }
@@ -99,7 +83,6 @@ class FavoritesListFragment : Fragment() {
     private fun showLoading() {
         binding.apply {
             contentLayout.alpha = 0.0f
-            errorLayout.root.isVisible = false
             progressIndicator.isVisible = true
         }
     }
@@ -107,7 +90,6 @@ class FavoritesListFragment : Fragment() {
     private fun showData(favoriteApods: List<FavoriteApod>) {
         binding.apply {
             progressIndicator.isVisible = false
-            errorLayout.root.isVisible = false
             if (favoriteApods.isEmpty()) {
                 favoritesRecyclerView.isVisible = false
                 emptyListLayout.isVisible = true
@@ -123,15 +105,6 @@ class FavoritesListFragment : Fragment() {
         }
     }
 
-    private fun showErrorMessage(exception: Throwable) {
-        Log.e(LOG_TAG, "showErrorMessage()", exception)
-        binding.apply {
-            contentLayout.alpha = 0.0f
-            progressIndicator.isVisible = false
-            errorLayout.root.isVisible = false
-        }
-    }
-
     private val itemTouchHelperCallback = object :
         ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or
@@ -143,8 +116,8 @@ class FavoritesListFragment : Fragment() {
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
         ): Boolean {
-            val fromItem = favoritesAdapter.currentList[viewHolder.adapterPosition]
-            val toItem = favoritesAdapter.currentList[target.adapterPosition]
+            val fromItem = favoritesAdapter.currentList[viewHolder.bindingAdapterPosition]
+            val toItem = favoritesAdapter.currentList[target.bindingAdapterPosition]
             val fromPosition = fromItem.position
             val toPosition = toItem.position
             val newList = favoritesAdapter.currentList.map { favoriteApod ->
@@ -164,7 +137,6 @@ class FavoritesListFragment : Fragment() {
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
             super.onSelectedChanged(viewHolder, actionState)
             if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                binding.swipeRefreshLayout.isEnabled = false
                 (viewHolder as? FavoritesAdapter.FavoriteApodViewHolder)?.isDragging = true
             }
         }
@@ -173,7 +145,6 @@ class FavoritesListFragment : Fragment() {
             super.clearView(recyclerView, viewHolder)
             (viewHolder as? FavoritesAdapter.FavoriteApodViewHolder)?.apply {
                 if (isDragging) {
-                    _binding?.swipeRefreshLayout?.isEnabled = true
                     isDragging = false
                     viewModel.updateFavoriteApods(*favoritesAdapter.currentList.toTypedArray())
                 }

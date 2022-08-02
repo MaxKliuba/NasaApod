@@ -31,7 +31,7 @@ class MediaTypeSerializer : KSerializer<MediaType> {
 
     override fun deserialize(decoder: Decoder): MediaType =
         decoder.decodeString().let { value ->
-            MediaType.values().firstOrNull { it.value == value } ?: MediaType.UNKNOWN
+            MediaType.values().firstOrNull { it.value == value } ?: MediaType.VIDEO
         }
 
     override fun serialize(encoder: Encoder, value: MediaType) =

@@ -49,7 +49,7 @@
                             android:layout_height="120dp"
                             android:layout_gravity="center_horizontal"
                             tools:ignore="ContentDescription"
-                            tools:srcCompat="@drawable/ic_unknow_media_placeholder_24" />
+                            tools:srcCompat="@drawable/ic_video_placeholder_24" />
 
                         <ImageView
                             android:id="@+id/image_view"

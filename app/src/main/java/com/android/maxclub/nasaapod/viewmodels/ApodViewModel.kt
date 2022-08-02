@@ -2,7 +2,6 @@ package com.android.maxclub.nasaapod.viewmodels
 
 import androidx.lifecycle.*
 import com.android.maxclub.nasaapod.data.*
-import com.android.maxclub.nasaapod.data.repository.ApodDateRepository
 import com.android.maxclub.nasaapod.data.repository.ApodRepository
 import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
 import com.android.maxclub.nasaapod.uistates.ApodUiState
@@ -15,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApodViewModel @Inject constructor(
-    private val apodDateRepository: ApodDateRepository,
     private val apodRepository: ApodRepository,
     private val favoriteApodRepository: FavoriteApodRepository,
 ) : ViewModel() {
@@ -24,13 +22,14 @@ class ApodViewModel @Inject constructor(
     private var fetchJob: Job? = null
     private var favoritesJob: Job? = null
     var currentApodDate: ApodDate = ApodDate.Today()
-    val currentApod: Apod? get() = (uiState.value as? ApodUiState.Success)?.data
+    val currentApod: Apod?
+        get() = (uiState.value as? ApodUiState.Success)?.apod ?: uiState.value.lastApod
 
-    fun fetchInitApod() {
+    fun refreshCurrentApod() {
         currentApodDate.let { apodDate ->
             when (apodDate) {
                 is ApodDate.Today -> fetchApodOfToday()
-                is ApodDate.From -> fetchApodByDate(apodDate.date!!)
+                is ApodDate.From -> fetchApodByDate(apodDate.date)
                 is ApodDate.Random -> fetchRandomApod()
             }
         }
@@ -46,16 +45,6 @@ class ApodViewModel @Inject constructor(
 
     private fun fetchRandomApod() {
         fetchApod(apodRepository.getRandomApod())
-    }
-
-    fun refreshCurrentApod() {
-        currentApodDate.let { apodDate ->
-            when {
-                apodDate is ApodDate.Today -> fetchApodOfToday()
-                apodDate.date != null -> fetchApodByDate(apodDate.date)
-                else -> fetchRandomApod()
-            }
-        }
     }
 
     fun addToFavorites(apod: Apod) {
@@ -81,13 +70,11 @@ class ApodViewModel @Inject constructor(
         fetchJob = viewModelScope.launch {
             apodFlow
                 .onStart {
-                    _uiState.value = ApodUiState.Loading
+                    _uiState.value = ApodUiState.Loading(_uiState.value.lastApod)
                 }.catch { exception ->
-                    _uiState.value = ApodUiState.Error(exception)
+                    _uiState.value = ApodUiState.Error(exception, _uiState.value.lastApod)
                 }.collect { apod ->
                     currentApodDate = ApodDate.From(apod.date, currentApodDate.id)
-                    apodDateRepository.updateApodDate(currentApodDate)
-                    apodDateRepository.updateLastLoadedDate(apod.date)
                     _uiState.value = ApodUiState.Success(apod)
                 }
         }

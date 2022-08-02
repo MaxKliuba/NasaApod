@@ -25,4 +25,14 @@ data class Apod(
     @SerialName("copyright") val copyright: String? = null,
 
     val isFavorite: Boolean = false,
-)
+) : java.io.Serializable {
+    fun toFavoriteApod(): FavoriteApod =
+        FavoriteApod(
+            date = date,
+            title = title,
+            mediaType = mediaType,
+            url = url,
+            hdUrl = hdUrl,
+            copyright = copyright,
+        )
+}

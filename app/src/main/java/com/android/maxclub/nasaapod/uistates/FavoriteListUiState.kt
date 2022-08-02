@@ -2,9 +2,8 @@ package com.android.maxclub.nasaapod.uistates
 
 import com.android.maxclub.nasaapod.data.FavoriteApod
 
-sealed class FavoriteListUiState {
-    object Initializing : FavoriteListUiState()
-    object Loading : FavoriteListUiState()
-    class Success(val data: List<FavoriteApod>) : FavoriteListUiState()
-    class Error(val exception: Throwable) : FavoriteListUiState()
+sealed class FavoriteListUiState(val favoriteApods: List<FavoriteApod>) {
+    object Initializing : FavoriteListUiState(emptyList())
+    class Loading(favoriteApods: List<FavoriteApod>) : FavoriteListUiState(favoriteApods)
+    class DataChanged(favoriteApods: List<FavoriteApod>) : FavoriteListUiState(favoriteApods)
 }
