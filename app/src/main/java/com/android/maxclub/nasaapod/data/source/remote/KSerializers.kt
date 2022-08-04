@@ -1,8 +1,8 @@
 package com.android.maxclub.nasaapod.data.source.remote
 
-import com.android.maxclub.nasaapod.data.MediaType
-import com.android.maxclub.nasaapod.utils.formatDate
-import com.android.maxclub.nasaapod.utils.parseDate
+import com.android.maxclub.nasaapod.data.util.MediaType
+import com.android.maxclub.nasaapod.util.formatDate
+import com.android.maxclub.nasaapod.util.parseDate
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

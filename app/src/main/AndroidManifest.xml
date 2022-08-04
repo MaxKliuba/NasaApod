@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NasaApod">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.main_page.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ImageActivity"
+            android:name=".presentation.image_viewer.ImageViewerActivity"
             android:exported="false"
             android:theme="@style/Theme.NasaApod.ImageActivity" />
     </application>

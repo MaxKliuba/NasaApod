@@ -1,28 +1,20 @@
 package com.android.maxclub.nasaapod.data.repository
 
-import com.android.maxclub.nasaapod.data.Apod
 import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.data.source.local.IFavoriteApodLocalDataSource
+import com.android.maxclub.nasaapod.data.source.local.FavoriteApodLocalDataSource
 import kotlinx.coroutines.flow.*
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FavoriteApodRepository @Inject constructor(
-    private val favoriteApodLocalDataSource: IFavoriteApodLocalDataSource,
+    private val favoriteApodLocalDataSource: FavoriteApodLocalDataSource,
 ) {
     fun getFavoriteApods(): Flow<List<FavoriteApod>> =
         favoriteApodLocalDataSource.getFavoriteApods()
 
-    fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod> =
-        favoriteApodLocalDataSource.getFavoriteApodByDate(date)
-
-    suspend fun addApodToFavorites(apod: Apod): Boolean =
-        favoriteApodLocalDataSource.insertFavoriteApods(apod.toFavoriteApod())
-
-    suspend fun removeApodFromFavorites(apod: Apod): Boolean =
-        favoriteApodLocalDataSource.deleteFavoriteApods(apod.toFavoriteApod())
+    suspend fun addFavoriteApod(favoriteApod: FavoriteApod): Boolean =
+        favoriteApodLocalDataSource.insertFavoriteApods(favoriteApod)
 
     suspend fun removeFavoriteApod(favoriteApod: FavoriteApod): Boolean =
         favoriteApodLocalDataSource.deleteFavoriteApods(favoriteApod)

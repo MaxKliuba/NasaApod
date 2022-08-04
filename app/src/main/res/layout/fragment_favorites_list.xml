@@ -2,10 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FavoritesListFragment">
+    tools:context=".presentation.favorites_list.FavoritesListFragment">
 
     <FrameLayout
         android:id="@+id/content_layout"
@@ -56,7 +55,7 @@
     </FrameLayout>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress_indicator"
+        android:id="@+id/progress_indicator_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

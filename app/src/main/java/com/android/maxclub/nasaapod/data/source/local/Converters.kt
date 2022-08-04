@@ -1,7 +1,7 @@
 package com.android.maxclub.nasaapod.data.source.local
 
 import androidx.room.TypeConverter
-import com.android.maxclub.nasaapod.data.MediaType
+import com.android.maxclub.nasaapod.data.util.MediaType
 import java.util.*
 
 class Converters {

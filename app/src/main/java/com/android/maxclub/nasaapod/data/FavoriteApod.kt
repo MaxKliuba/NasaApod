@@ -3,6 +3,7 @@ package com.android.maxclub.nasaapod.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.android.maxclub.nasaapod.data.util.MediaType
 import java.io.Serializable
 import java.util.*
 
@@ -31,16 +32,4 @@ data class FavoriteApod(
 
     @ColumnInfo(name = "position")
     val position: Int = -1,
-) : Serializable {
-    fun toApod(): Apod =
-        Apod(
-            date = date,
-            title = title,
-            explanation = "",
-            mediaType = mediaType,
-            url = url,
-            hdUrl = hdUrl,
-            copyright = copyright,
-            isFavorite = true,
-        )
-}
+) : Serializable

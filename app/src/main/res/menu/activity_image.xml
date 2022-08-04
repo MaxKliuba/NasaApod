@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/download"
+        android:id="@+id/hd"
+        android:icon="@drawable/ic_hd_image_24"
+        android:title="@string/hd_item_title"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/save"
         android:icon="@drawable/ic_download_24"
         android:title="@string/download_item_title"
         app:showAsAction="ifRoom" />

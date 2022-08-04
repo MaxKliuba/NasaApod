@@ -15,9 +15,14 @@
     <string name="error_message">Oops, something went wrong</string>
     <string name="retry_button_title">Retry</string>
     <string name="empty_list_message">Your collection list is empty</string>
-    <string name="new_item_label_description">New item</string>
-    <string name="download_item_title">Save to Gallery</string>
-    <string name="downloaded_successfully_message">Saved to Gallery</string>
-    <string name="download_error_message">Nothing to save</string>
     <string name="drag_indicator_description">Drag indicator</string>
+    <string name="new_item_label_description">New item</string>
+    <string name="delete_item_message">Item has been removed</string>
+    <string name="undo_button_title">Undo</string>
+    <string name="favorite_item_title">Remove from favorites</string>
+
+    <string name="hd_item_title">HD Image</string>
+    <string name="download_item_title">Save to Gallery</string>
+    <string name="successfully_saved_message">Saved to Gallery</string>
+    <string name="saving_error_message">Nothing to save</string>
 </resources>
