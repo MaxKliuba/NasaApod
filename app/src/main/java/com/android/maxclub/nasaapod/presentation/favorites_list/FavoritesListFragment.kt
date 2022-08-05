@@ -1,10 +1,13 @@
 package com.android.maxclub.nasaapod.presentation.favorites_list
 
+import android.graphics.Canvas
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -153,6 +156,45 @@ class FavoritesListFragment : Fragment() {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val favoriteApod = favoritesAdapter.currentList[viewHolder.bindingAdapterPosition]
             viewModel.onEvent(FavoriteListEvent.OnItemDelete(favoriteApod))
+        }
+
+        override fun onChildDraw(
+            c: Canvas,
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            dX: Float,
+            dY: Float,
+            actionState: Int,
+            isCurrentlyActive: Boolean
+        ) {
+            val itemView = viewHolder.itemView
+
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                ColorDrawable(
+                    ContextCompat.getColor(requireContext(), R.color.color_primary)
+                ).apply {
+                    setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    draw(c)
+                }
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_swipe_delete_favorite_24)
+                    ?.apply {
+                        val margin = (itemView.height - intrinsicHeight) / 2
+                        setBounds(
+                            itemView.right - margin - intrinsicWidth,
+                            itemView.top + margin,
+                            itemView.right - margin,
+                            itemView.bottom - margin
+                        )
+                        draw(c)
+                    }
+            }
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
 
         override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
