@@ -10,8 +10,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentHomeViewPagerBinding
+import com.android.maxclub.nasaapod.util.ServiceDateManager
+import com.android.maxclub.nasaapod.util.ServiceDateValidator
 import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -102,15 +103,17 @@ class HomeViewPagerFragment : Fragment() {
 
     private fun showDatePickerDialog() {
         val constraint = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointBackward.now())
+            .setValidator(ServiceDateValidator())
+            .setStart(ServiceDateManager.FIRST_DATE)
+            .setEnd(ServiceDateManager.getTodayDate().time)
             .build()
 
         MaterialDatePicker.Builder.datePicker()
             .setCalendarConstraints(constraint)
             .build()
             .apply {
-                addOnPositiveButtonClickListener { date ->
-                    viewModel.onEvent(HomeEvent.OnDateSelected(Date(date)))
+                addOnPositiveButtonClickListener { utcTimeMillis ->
+                    viewModel.onEvent(HomeEvent.OnDateSelected(Date(utcTimeMillis)))
                 }
             }
             .show(childFragmentManager, "DATE_PICKER")

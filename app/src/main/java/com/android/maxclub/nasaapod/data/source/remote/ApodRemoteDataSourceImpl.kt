@@ -1,6 +1,8 @@
 package com.android.maxclub.nasaapod.data.source.remote
 
 import com.android.maxclub.nasaapod.data.source.remote.api.ApodService
+import com.android.maxclub.nasaapod.util.DEFAULT_DATE_LOCALE
+import com.android.maxclub.nasaapod.util.DEFAULT_DATE_PATTERN
 import com.android.maxclub.nasaapod.util.formatDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +19,7 @@ class ApodRemoteDataSourceImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun getApodByDate(date: Date): Flow<ApodDto> = flow {
-        emit(apodService.getApodByDate(formatDate(date, "yyyy-MM-dd", Locale.ENGLISH)))
+        emit(apodService.getApodByDate(formatDate(date, DEFAULT_DATE_PATTERN, DEFAULT_DATE_LOCALE)))
     }.flowOn(Dispatchers.IO)
 
     override fun getRandomApod(): Flow<ApodDto> = flow {

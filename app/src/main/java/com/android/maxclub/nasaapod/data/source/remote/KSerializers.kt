@@ -1,6 +1,8 @@
 package com.android.maxclub.nasaapod.data.source.remote
 
 import com.android.maxclub.nasaapod.data.util.MediaType
+import com.android.maxclub.nasaapod.util.DEFAULT_DATE_LOCALE
+import com.android.maxclub.nasaapod.util.DEFAULT_DATE_PATTERN
 import com.android.maxclub.nasaapod.util.formatDate
 import com.android.maxclub.nasaapod.util.parseDate
 import kotlinx.serialization.KSerializer
@@ -12,17 +14,14 @@ import kotlinx.serialization.encoding.Encoder
 import java.util.*
 
 class DateSerializer : KSerializer<Date> {
-    private val pattern: String = "yyyy-MM-dd"
-    private val locale: Locale = Locale.ENGLISH
-
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor("Date", PrimitiveKind.STRING)
 
     override fun deserialize(decoder: Decoder): Date =
-        parseDate(decoder.decodeString(), pattern, locale)!!
+        parseDate(decoder.decodeString(), DEFAULT_DATE_PATTERN, DEFAULT_DATE_LOCALE)!!
 
     override fun serialize(encoder: Encoder, value: Date) =
-        encoder.encodeString(formatDate(value, pattern, locale))
+        encoder.encodeString(formatDate(value, DEFAULT_DATE_PATTERN, DEFAULT_DATE_LOCALE))
 }
 
 class MediaTypeSerializer : KSerializer<MediaType> {

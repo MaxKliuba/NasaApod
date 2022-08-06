@@ -9,6 +9,7 @@ import com.android.maxclub.nasaapod.data.util.MediaType
 import com.android.maxclub.nasaapod.data.util.toFavoriteApod
 import com.android.maxclub.nasaapod.data.util.toImageInfo
 import com.android.maxclub.nasaapod.presentation.home_pager.apod.ApodFragment.Companion.ARG_APOD_DATE
+import com.android.maxclub.nasaapod.util.ServiceDateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -92,15 +93,15 @@ class ApodViewModel @Inject constructor(
     private fun fetchCurrentApod() {
         apodDate.let { apodDate ->
             when (apodDate) {
-                is ApodDate.Today -> fetchApodOfToday()
+                is ApodDate.Today -> fetchApodOfToday(ServiceDateManager.getTodayDate())
                 is ApodDate.From -> fetchApodByDate(apodDate.date)
                 is ApodDate.Random -> fetchRandomApod()
             }
         }
     }
 
-    private fun fetchApodOfToday() {
-        fetchApod(apodRepository.getApodOfToday())
+    private fun fetchApodOfToday(date: Date? = null) {
+        fetchApod(apodRepository.getApodOfToday(date))
     }
 
     private fun fetchApodByDate(date: Date) {

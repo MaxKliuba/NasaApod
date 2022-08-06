@@ -15,20 +15,37 @@ class ApodRepository @Inject constructor(
     private val apodRemoteDataSource: ApodRemoteDataSource,
     private val favoriteApodLocalDataSource: FavoriteApodLocalDataSource,
 ) {
-    fun getApodOfToday(): Flow<Apod> =
-        apodRemoteDataSource.getApodOfToday()
+    private val cachedApods: MutableSet<ApodDto> = mutableSetOf()
+
+    fun getApodOfToday(date: Date? = null): Flow<Apod> =
+        (date?.let { tryGetApodDtoByDate(it) } ?: apodRemoteDataSource.getApodOfToday())
+            .cache()
             .toApodFlow()
 
     fun getApodByDate(date: Date): Flow<Apod> =
-        apodRemoteDataSource.getApodByDate(date)
+        (tryGetApodDtoByDate(date) ?: apodRemoteDataSource.getApodByDate(date))
+            .cache()
             .toApodFlow()
 
     fun getRandomApod(): Flow<Apod> =
         apodRemoteDataSource.getRandomApod()
+            .cache()
             .toApodFlow()
 
     private fun getFavoriteApodByDate(date: Date): Flow<FavoriteApod> =
         favoriteApodLocalDataSource.getFavoriteApodByDate(date)
+
+    private fun tryGetApodDtoByDate(date: Date): Flow<ApodDto>? =
+        cachedApods.find { cachedApod ->
+            cachedApod.date == date
+        }?.let { cachedApod ->
+            flow { emit(cachedApod) }
+        }
+
+    private fun Flow<ApodDto>.cache(): Flow<ApodDto> =
+        onEach { apodDto ->
+            cachedApods += apodDto
+        }
 
     private fun Flow<ApodDto>.toApodFlow(): Flow<Apod> =
         map { apodDto ->

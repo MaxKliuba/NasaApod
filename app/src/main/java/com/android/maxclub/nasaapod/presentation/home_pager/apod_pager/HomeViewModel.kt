@@ -3,8 +3,7 @@ package com.android.maxclub.nasaapod.presentation.home_pager.apod_pager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.maxclub.nasaapod.data.util.ApodDate
-import com.android.maxclub.nasaapod.util.getNextDate
-import com.android.maxclub.nasaapod.util.getPrevDate
+import com.android.maxclub.nasaapod.util.ServiceDateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -55,8 +54,16 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             .apply {
                 indexOf(updatedApodDate).let { position ->
                     val date = updatedApodDate.date
-                    if (position == size - 1) add(ApodDate.From(getNextDate(date)))
-                    if (position == 0) add(position, ApodDate.From(getPrevDate(date)))
+                    if (position == size - 1) {
+                        ServiceDateManager.getNextDate(date)?.let { nextDate ->
+                            add(ApodDate.From(nextDate))
+                        }
+                    }
+                    if (position == 0) {
+                        ServiceDateManager.getPrevDate(date)?.let { prevDate ->
+                            add(position, ApodDate.From(prevDate))
+                        }
+                    }
                 }
             }
 }
