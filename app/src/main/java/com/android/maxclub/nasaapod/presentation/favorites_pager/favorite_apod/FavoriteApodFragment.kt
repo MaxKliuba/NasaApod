@@ -10,9 +10,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.*
-import com.android.maxclub.nasaapod.data.util.MediaType
+import com.android.maxclub.nasaapod.domain.model.MediaType
 import com.android.maxclub.nasaapod.databinding.FragmentFavoriteApodBinding
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_pager.FavoritesEvent
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_pager.FavoritesViewModel
 import com.android.maxclub.nasaapod.presentation.util.openImageMedia

@@ -12,9 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentApodBinding
-import com.android.maxclub.nasaapod.data.Apod
-import com.android.maxclub.nasaapod.data.util.ApodDate
-import com.android.maxclub.nasaapod.data.util.MediaType
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.ApodDate
+import com.android.maxclub.nasaapod.domain.model.MediaType
 import com.android.maxclub.nasaapod.presentation.home_pager.apod_pager.HomeEvent
 import com.android.maxclub.nasaapod.presentation.home_pager.apod_pager.HomeViewModel
 import com.android.maxclub.nasaapod.presentation.util.openImageMedia

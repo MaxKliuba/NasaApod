@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.data.util.MediaType
+import com.android.maxclub.nasaapod.domain.model.MediaType
 import com.android.maxclub.nasaapod.databinding.ListItemFavoriteApodBinding
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.android.maxclub.nasaapod.util.formatDate
 import com.squareup.picasso.Picasso
 import java.util.*

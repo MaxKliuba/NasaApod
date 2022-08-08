@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.Apod
-import com.android.maxclub.nasaapod.data.util.ImageInfo
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.ImageInfo
 import com.android.maxclub.nasaapod.presentation.image_viewer.ImageViewerActivity
 import com.android.maxclub.nasaapod.util.formatDate
 import java.util.*

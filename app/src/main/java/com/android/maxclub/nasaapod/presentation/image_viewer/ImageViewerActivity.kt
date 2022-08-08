@@ -14,7 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.util.ImageInfo
+import com.android.maxclub.nasaapod.domain.model.ImageInfo
 import com.android.maxclub.nasaapod.databinding.ActivityImageBinding
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
@@ -158,7 +158,7 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_IMAGE_INFO = "com.android.maxclub.nasaapod.imageactyvity.imageinfo"
+        const val EXTRA_IMAGE_INFO = "com.android.maxclub.nasaapod.imagevieweractivity.imageinfo"
 
         fun newIntent(context: Context, imageInfo: ImageInfo): Intent =
             Intent(context, ImageViewerActivity::class.java).apply {

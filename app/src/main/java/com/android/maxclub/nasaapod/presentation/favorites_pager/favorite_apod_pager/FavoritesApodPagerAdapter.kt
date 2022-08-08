@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.android.maxclub.nasaapod.data.FavoriteApod
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod.FavoriteApodFragment
 
 class FavoritesApodPagerAdapter(

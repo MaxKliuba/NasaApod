@@ -10,8 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.databinding.FragmentHomeViewPagerBinding
-import com.android.maxclub.nasaapod.util.ServiceDateManager
-import com.android.maxclub.nasaapod.util.ServiceDateValidator
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +60,11 @@ class HomeViewPagerFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiEvent.collect { uiEvent ->
                     when (uiEvent) {
-                        HomeUiEvent.OnShowDatePicker -> showDatePickerDialog()
+                        is HomeUiEvent.OnShowDatePicker -> showDatePickerDialog(
+                            uiEvent.startDate,
+                            uiEvent.endDate,
+                            uiEvent.isValid
+                        )
                     }
                 }
             }
@@ -101,11 +103,15 @@ class HomeViewPagerFragment : Fragment() {
         viewModel.onEvent(HomeEvent.OnStateReset)
     }
 
-    private fun showDatePickerDialog() {
+    private fun showDatePickerDialog(
+        startDate: Date,
+        endDate: Date,
+        isValid: (Date) -> Boolean,
+    ) {
         val constraint = CalendarConstraints.Builder()
-            .setValidator(ServiceDateValidator())
-            .setStart(ServiceDateManager.FIRST_DATE)
-            .setEnd(ServiceDateManager.getTodayDate().time)
+            .setValidator(ApodServiceDateValidator(isValid))
+            .setStart(startDate.time)
+            .setEnd(endDate.time)
             .build()
 
         MaterialDatePicker.Builder.datePicker()

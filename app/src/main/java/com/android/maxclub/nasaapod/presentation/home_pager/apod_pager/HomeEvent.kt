@@ -1,6 +1,6 @@
 package com.android.maxclub.nasaapod.presentation.home_pager.apod_pager
 
-import com.android.maxclub.nasaapod.data.util.ApodDate
+import com.android.maxclub.nasaapod.domain.model.ApodDate
 import java.util.*
 
 sealed class HomeEvent {

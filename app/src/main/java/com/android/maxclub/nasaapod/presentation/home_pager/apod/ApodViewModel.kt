@@ -1,26 +1,22 @@
 package com.android.maxclub.nasaapod.presentation.home_pager.apod
 
 import androidx.lifecycle.*
-import com.android.maxclub.nasaapod.data.*
-import com.android.maxclub.nasaapod.data.repository.ApodRepository
-import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
-import com.android.maxclub.nasaapod.data.util.ApodDate
-import com.android.maxclub.nasaapod.data.util.MediaType
-import com.android.maxclub.nasaapod.data.util.toFavoriteApod
-import com.android.maxclub.nasaapod.data.util.toImageInfo
+import com.android.maxclub.nasaapod.domain.model.ApodDate
+import com.android.maxclub.nasaapod.domain.model.MediaType
+import com.android.maxclub.nasaapod.domain.util.toFavoriteApod
+import com.android.maxclub.nasaapod.domain.util.toImageInfo
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.usecase.ApodUseCases
 import com.android.maxclub.nasaapod.presentation.home_pager.apod.ApodFragment.Companion.ARG_APOD_DATE
-import com.android.maxclub.nasaapod.util.ServiceDateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ApodViewModel @Inject constructor(
-    private val apodRepository: ApodRepository,
-    private val favoriteApodRepository: FavoriteApodRepository,
+    private val apodUseCases: ApodUseCases,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ApodUiState>(ApodUiState.Loading())
@@ -37,14 +33,14 @@ class ApodViewModel @Inject constructor(
         get() = (uiState.value as? ApodUiState.Success)?.apod ?: uiState.value.cachedApod
 
     init {
-        fetchCurrentApod()
+        fetchApod()
         fetchFavoriteApods()
     }
 
     fun onEvent(event: ApodEvent) {
         when (event) {
             is ApodEvent.OnRefresh -> {
-                fetchCurrentApod()
+                fetchApod()
             }
             is ApodEvent.OnError -> {
                 viewModelScope.launch {
@@ -90,32 +86,10 @@ class ApodViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCurrentApod() {
-        apodDate.let { apodDate ->
-            when (apodDate) {
-                is ApodDate.Today -> fetchApodOfToday(ServiceDateManager.getTodayDate())
-                is ApodDate.From -> fetchApodByDate(apodDate.date)
-                is ApodDate.Random -> fetchRandomApod()
-            }
-        }
-    }
-
-    private fun fetchApodOfToday(date: Date? = null) {
-        fetchApod(apodRepository.getApodOfToday(date))
-    }
-
-    private fun fetchApodByDate(date: Date) {
-        fetchApod(apodRepository.getApodByDate(date))
-    }
-
-    private fun fetchRandomApod() {
-        fetchApod(apodRepository.getRandomApod())
-    }
-
-    private fun fetchApod(apodFlow: Flow<Apod>) {
+    private fun fetchApod() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            apodFlow
+            apodUseCases.getApod(apodDate)
                 .onStart {
                     _uiState.value = ApodUiState.Loading(_uiState.value.cachedApod)
                 }.catch { exception ->
@@ -131,7 +105,7 @@ class ApodViewModel @Inject constructor(
 
     private fun fetchFavoriteApods() {
         viewModelScope.launch {
-            favoriteApodRepository.getFavoriteApods()
+            apodUseCases.getFavoriteApods()
                 .collect { favoriteApods ->
                     currentApod?.let { apod ->
                         _uiState.value = ApodUiState.Success(
@@ -147,18 +121,16 @@ class ApodViewModel @Inject constructor(
     private fun addToFavorites(apod: Apod) {
         favoritesJob?.cancel()
         favoritesJob = viewModelScope.launch {
-            if (favoriteApodRepository.addFavoriteApod(apod.toFavoriteApod(isNew = true))) {
-                _uiState.value = ApodUiState.Success(apod.copy(isFavorite = true))
-            }
+            apodUseCases.addFavoriteApod(apod.toFavoriteApod(isNew = true))
+//            _uiState.value = ApodUiState.Success(apod.copy(isFavorite = true))
         }
     }
 
     private fun removeFromFavorites(apod: Apod) {
         favoritesJob?.cancel()
         favoritesJob = viewModelScope.launch {
-            if (favoriteApodRepository.removeFavoriteApod(apod.toFavoriteApod(isNew = true))) {
-                _uiState.value = ApodUiState.Success(apod.copy(isFavorite = false))
-            }
+            apodUseCases.deleteFavoriteApod(apod.toFavoriteApod(isNew = true))
+//            _uiState.value = ApodUiState.Success(apod.copy(isFavorite = false))
         }
     }
 }

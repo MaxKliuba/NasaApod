@@ -1,13 +1,17 @@
 package com.android.maxclub.nasaapod.di
 
 import android.content.Context
-import com.android.maxclub.nasaapod.data.source.remote.api.ApodService
-import com.android.maxclub.nasaapod.data.source.local.FavoriteApodDao
-import com.android.maxclub.nasaapod.data.source.local.FavoriteApodDatabase
-import com.android.maxclub.nasaapod.data.source.local.FavoriteApodLocalDataSourceImpl
-import com.android.maxclub.nasaapod.data.source.local.FavoriteApodLocalDataSource
-import com.android.maxclub.nasaapod.data.source.remote.ApodRemoteDataSourceImpl
-import com.android.maxclub.nasaapod.data.source.remote.ApodRemoteDataSource
+import com.android.maxclub.nasaapod.data.remote.api.ApodService
+import com.android.maxclub.nasaapod.data.local.database.FavoriteApodDao
+import com.android.maxclub.nasaapod.data.local.database.FavoriteApodDatabase
+import com.android.maxclub.nasaapod.data.local.FavoriteApodLocalDataSource
+import com.android.maxclub.nasaapod.data.local.FavoriteApodLocalDataSourceImpl
+import com.android.maxclub.nasaapod.data.remote.ApodRemoteDataSource
+import com.android.maxclub.nasaapod.data.remote.ApodRemoteDataSourceImpl
+import com.android.maxclub.nasaapod.data.repository.ApodRepositoryImpl
+import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepositoryImpl
+import com.android.maxclub.nasaapod.domain.repository.ApodRepository
+import com.android.maxclub.nasaapod.domain.repository.FavoriteApodRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +27,20 @@ object ServiceModule {
     @Provides
     fun provideApodService(): ApodService =
         ApodService.create()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    fun provideFavoriteApodDao(database: FavoriteApodDatabase): FavoriteApodDao =
+        database.favoriteApodDao()
+
+    @Singleton
+    @Provides
+    fun provideFavoriteApodDatabase(@ApplicationContext context: Context): FavoriteApodDatabase =
+        FavoriteApodDatabase.create(context)
 }
 
 @Module
@@ -44,13 +62,20 @@ object DataSourceModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
-    @Provides
-    fun provideFavoriteApodDao(database: FavoriteApodDatabase): FavoriteApodDao =
-        database.favoriteApodDao()
+object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideFavoriteApodDatabase(@ApplicationContext context: Context): FavoriteApodDatabase =
-        FavoriteApodDatabase.create(context)
+    fun provideApodRepository(
+        apodRemoteDataSource: ApodRemoteDataSource,
+        favoriteApodLocalDataSource: FavoriteApodLocalDataSource,
+    ): ApodRepository =
+        ApodRepositoryImpl(apodRemoteDataSource, favoriteApodLocalDataSource)
+
+    @Singleton
+    @Provides
+    fun provideFavoriteApodRepository(
+        favoriteApodLocalDataSource: FavoriteApodLocalDataSource
+    ): FavoriteApodRepository =
+        FavoriteApodRepositoryImpl(favoriteApodLocalDataSource)
 }

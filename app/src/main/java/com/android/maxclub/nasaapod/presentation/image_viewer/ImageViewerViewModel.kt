@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.maxclub.nasaapod.data.util.ImageInfo
+import com.android.maxclub.nasaapod.domain.model.ImageInfo
 import com.android.maxclub.nasaapod.presentation.image_viewer.ImageViewerActivity.Companion.EXTRA_IMAGE_INFO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -2,15 +2,19 @@ package com.android.maxclub.nasaapod.presentation.home_pager.apod_pager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.maxclub.nasaapod.data.util.ApodDate
-import com.android.maxclub.nasaapod.util.ServiceDateManager
+import com.android.maxclub.nasaapod.domain.model.ApodDate
+import com.android.maxclub.nasaapod.domain.usecase.GetServiceDateUseCase
+import com.android.maxclub.nasaapod.domain.util.InvalidServiceDateException
+import com.android.maxclub.nasaapod.domain.util.ServiceDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val getServiceDate: GetServiceDateUseCase,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState(listOf(ApodDate.Today())))
     val uiState = _uiState.asStateFlow()
 
@@ -29,14 +33,22 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 _uiState.value = HomeUiState(getUpdatedApodDates(event.apodDate))
             }
             is HomeEvent.OnStateReset -> {
-                _uiState.value = HomeUiState(listOf(ApodDate.Today()))
+                _uiState.value = HomeUiState(
+                    listOf(ApodDate.Today(getServiceDate(ServiceDate.Today)))
+                )
             }
             is HomeEvent.OnRandomDateClick -> {
                 _uiState.value = HomeUiState(listOf(ApodDate.Random()))
             }
             is HomeEvent.OnDatePickerClick -> {
                 viewModelScope.launch {
-                    _uiEvent.emit(HomeUiEvent.OnShowDatePicker)
+                    _uiEvent.emit(
+                        HomeUiEvent.OnShowDatePicker(
+                            startDate = getServiceDate(ServiceDate.Start),
+                            endDate = getServiceDate(ServiceDate.Today),
+                            isValid = getServiceDate::contains,
+                        )
+                    )
                 }
             }
             is HomeEvent.OnDateSelected -> {
@@ -55,13 +67,20 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 indexOf(updatedApodDate).let { position ->
                     val date = updatedApodDate.date
                     if (position == size - 1) {
-                        ServiceDateManager.getNextDate(date)?.let { nextDate ->
-                            add(ApodDate.From(nextDate))
+                        try {
+                            add(ApodDate.From(getServiceDate(ServiceDate.NextTo(date))))
+                        } catch (e: InvalidServiceDateException) {
+                            e.printStackTrace()
                         }
                     }
                     if (position == 0) {
-                        ServiceDateManager.getPrevDate(date)?.let { prevDate ->
-                            add(position, ApodDate.From(prevDate))
+                        try {
+                            add(
+                                position,
+                                ApodDate.From(getServiceDate(ServiceDate.PreviousTo(date)))
+                            )
+                        } catch (e: InvalidServiceDateException) {
+                            e.printStackTrace()
                         }
                     }
                 }

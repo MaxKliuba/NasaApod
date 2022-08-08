@@ -2,7 +2,7 @@ package com.android.maxclub.nasaapod.presentation.favorites_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
+import com.android.maxclub.nasaapod.domain.usecase.ApodUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteListViewModel @Inject constructor(
-    private val favoriteApodRepository: FavoriteApodRepository
+    private val apodUseCases: ApodUseCases,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<FavoriteListUiState>(
         FavoriteListUiState.Loading(emptyList())
@@ -37,14 +37,13 @@ class FavoriteListViewModel @Inject constructor(
             }
             is FavoriteListEvent.OnItemDelete -> {
                 viewModelScope.launch {
-                    if (favoriteApodRepository.removeFavoriteApod(event.favoriteApod)) {
-                        _uiEvent.emit(FavoriteListUiEvent.OnItemDeleted(event.favoriteApod))
-                    }
+                    apodUseCases.deleteFavoriteApod(event.favoriteApod)
+                    _uiEvent.emit(FavoriteListUiEvent.OnItemDeleted(event.favoriteApod))
                 }
             }
             is FavoriteListEvent.OnItemRestore -> {
                 CoroutineScope(Dispatchers.Main).launch {
-                    favoriteApodRepository.addFavoriteApod(event.favoriteApod)
+                    apodUseCases.addFavoriteApod(event.favoriteApod)
                 }
             }
             is FavoriteListEvent.OnLocalUpdate -> {
@@ -54,7 +53,7 @@ class FavoriteListViewModel @Inject constructor(
             }
             is FavoriteListEvent.OnUpdate -> {
                 updateJob = viewModelScope.launch {
-                    favoriteApodRepository.updateFavoriteApods(*event.favoriteApods.toTypedArray())
+                    apodUseCases.updateFavoriteApods(*event.favoriteApods.toTypedArray())
                 }
             }
         }
@@ -63,15 +62,13 @@ class FavoriteListViewModel @Inject constructor(
     private fun fetchFavoriteApods() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            favoriteApodRepository.getFavoriteApods()
+            apodUseCases.getFavoriteApods()
                 .onStart {
                     _uiState.value = FavoriteListUiState.Loading(_uiState.value.favoriteApods)
                 }.catch {
                     _uiState.value = FavoriteListUiState.Success(_uiState.value.favoriteApods)
                 }.collect { favoriteApods ->
-                    _uiState.value = FavoriteListUiState.Success(
-                        favoriteApods.sortedByDescending { it.position }
-                    )
+                    _uiState.value = FavoriteListUiState.Success(favoriteApods)
                 }
         }
     }

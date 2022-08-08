@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.FavoriteApod
 import com.android.maxclub.nasaapod.databinding.FragmentFavoritesListBinding
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

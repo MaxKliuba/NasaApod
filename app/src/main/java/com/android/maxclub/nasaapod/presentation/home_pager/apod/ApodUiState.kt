@@ -1,6 +1,6 @@
 package com.android.maxclub.nasaapod.presentation.home_pager.apod
 
-import com.android.maxclub.nasaapod.data.Apod
+import com.android.maxclub.nasaapod.domain.model.Apod
 
 sealed class ApodUiState(val cachedApod: Apod?) {
     class Loading(cachedApod: Apod? = null) : ApodUiState(cachedApod)

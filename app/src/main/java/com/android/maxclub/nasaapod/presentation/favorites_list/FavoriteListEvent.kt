@@ -1,6 +1,6 @@
 package com.android.maxclub.nasaapod.presentation.favorites_list
 
-import com.android.maxclub.nasaapod.data.FavoriteApod
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 
 sealed class FavoriteListEvent {
     data class OnItemClick(val favoriteApod: FavoriteApod) : FavoriteListEvent()

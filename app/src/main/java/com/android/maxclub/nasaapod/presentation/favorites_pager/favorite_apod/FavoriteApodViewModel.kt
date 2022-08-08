@@ -1,12 +1,13 @@
 package com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod
 
 import androidx.lifecycle.*
-import com.android.maxclub.nasaapod.data.*
-import com.android.maxclub.nasaapod.data.repository.ApodRepository
-import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
-import com.android.maxclub.nasaapod.data.util.MediaType
-import com.android.maxclub.nasaapod.data.util.toApod
-import com.android.maxclub.nasaapod.data.util.toImageInfo
+import com.android.maxclub.nasaapod.domain.model.MediaType
+import com.android.maxclub.nasaapod.domain.util.toImageInfo
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.ApodDate
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
+import com.android.maxclub.nasaapod.domain.usecase.ApodUseCases
+import com.android.maxclub.nasaapod.domain.util.toApod
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod.FavoriteApodFragment.Companion.ARG_FAVORITE_APOD
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -16,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteApodViewModel @Inject constructor(
-    private val apodRepository: ApodRepository,
-    private val favoriteApodRepository: FavoriteApodRepository,
+    private val apodUseCases: ApodUseCases,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<FavoriteApodUiState>(FavoriteApodUiState.Loading())
@@ -44,7 +44,7 @@ class FavoriteApodViewModel @Inject constructor(
             is FavoriteApodEvent.OnShowData -> {
                 viewModelScope.launch {
                     if (favoriteApod.isNew) {
-                        favoriteApodRepository.updateFavoriteApods(favoriteApod.copy(isNew = false))
+                        apodUseCases.updateFavoriteApods(favoriteApod.copy(isNew = false))
                     }
                 }
             }
@@ -85,9 +85,8 @@ class FavoriteApodViewModel @Inject constructor(
             }
             is FavoriteApodEvent.OnDelete -> {
                 viewModelScope.launch {
-                    if (favoriteApodRepository.removeFavoriteApod(favoriteApod)) {
-                        _uiEvent.emit(FavoriteApodUiEvent.OnDelete(favoriteApod))
-                    }
+                    apodUseCases.deleteFavoriteApod(favoriteApod)
+                    _uiEvent.emit(FavoriteApodUiEvent.OnDelete(favoriteApod))
                 }
             }
         }
@@ -96,7 +95,7 @@ class FavoriteApodViewModel @Inject constructor(
     private fun fetchCurrentApod() {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
-            apodRepository.getApodByDate(currentApod.date)
+            apodUseCases.getApod(ApodDate.From(currentApod.date))
                 .onStart {
                     _uiState.value = FavoriteApodUiState.Loading(_uiState.value.cachedApod)
                 }.catch { exception ->

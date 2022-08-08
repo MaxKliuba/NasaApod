@@ -3,8 +3,8 @@ package com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.data.repository.FavoriteApodRepository
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
+import com.android.maxclub.nasaapod.domain.usecase.ApodUseCases
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_pager.FavoritesViewPagerFragment.Companion.ARG_FAVORITE_APOD
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val favoriteApodRepository: FavoriteApodRepository,
+    private val apodUseCases: ApodUseCases,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
@@ -71,9 +71,8 @@ class FavoritesViewModel @Inject constructor(
             }
             is FavoritesEvent.OnItemRestore -> {
                 viewModelScope.launch {
-                    if (favoriteApodRepository.addFavoriteApod(event.favoriteApod)) {
-                        restoredItem = event.favoriteApod
-                    }
+                    apodUseCases.addFavoriteApod(event.favoriteApod)
+                    restoredItem = event.favoriteApod
                 }
             }
         }
@@ -81,11 +80,9 @@ class FavoritesViewModel @Inject constructor(
 
     private fun fetchFavoriteApods() {
         viewModelScope.launch {
-            favoriteApodRepository.getFavoriteApods()
+            apodUseCases.getFavoriteApods()
                 .collect { favoriteApods ->
-                    _uiState.value = _uiState.value.copy(
-                        favoriteApods = favoriteApods.sortedByDescending { it.position }
-                    )
+                    _uiState.value = _uiState.value.copy(favoriteApods = favoriteApods)
                 }
         }
     }

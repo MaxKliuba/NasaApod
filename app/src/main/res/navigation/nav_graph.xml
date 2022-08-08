@@ -31,7 +31,7 @@
         tools:layout="@layout/fragment_favorites_view_pager" >
         <argument
             android:name="favoriteApod"
-            app:argType="com.android.maxclub.nasaapod.data.FavoriteApod" />
+            app:argType="com.android.maxclub.nasaapod.domain.model.FavoriteApod" />
     </fragment>
     <fragment
         android:id="@+id/favorite_apod_fragment"

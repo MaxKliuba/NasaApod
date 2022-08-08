@@ -3,7 +3,7 @@ package com.android.maxclub.nasaapod.presentation.home_pager.apod_pager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.android.maxclub.nasaapod.data.util.ApodDate
+import com.android.maxclub.nasaapod.domain.model.ApodDate
 import com.android.maxclub.nasaapod.presentation.home_pager.apod.ApodFragment
 
 class HomeApodPagerAdapter(

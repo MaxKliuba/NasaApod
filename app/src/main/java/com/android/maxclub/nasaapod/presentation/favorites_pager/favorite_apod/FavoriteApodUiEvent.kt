@@ -1,8 +1,8 @@
 package com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod
 
-import com.android.maxclub.nasaapod.data.Apod
-import com.android.maxclub.nasaapod.data.FavoriteApod
-import com.android.maxclub.nasaapod.data.util.ImageInfo
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
+import com.android.maxclub.nasaapod.domain.model.ImageInfo
 
 sealed class FavoriteApodUiEvent {
     data class OnShowError(val exception: Throwable) : FavoriteApodUiEvent()

@@ -1,8 +1,8 @@
 package com.android.maxclub.nasaapod.presentation.home_pager.apod
 
-import com.android.maxclub.nasaapod.data.Apod
-import com.android.maxclub.nasaapod.data.util.ApodDate
-import com.android.maxclub.nasaapod.data.util.ImageInfo
+import com.android.maxclub.nasaapod.domain.model.Apod
+import com.android.maxclub.nasaapod.domain.model.ApodDate
+import com.android.maxclub.nasaapod.domain.model.ImageInfo
 
 sealed class ApodUiEvent {
     data class OnDateLoaded(val apodDate: ApodDate.From) : ApodUiEvent()

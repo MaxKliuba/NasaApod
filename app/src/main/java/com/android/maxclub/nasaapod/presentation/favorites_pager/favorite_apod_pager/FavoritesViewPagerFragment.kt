@@ -11,8 +11,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.android.maxclub.nasaapod.R
-import com.android.maxclub.nasaapod.data.FavoriteApod
 import com.android.maxclub.nasaapod.databinding.FragmentFavoritesViewPagerBinding
+import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
