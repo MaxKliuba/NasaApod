@@ -22,7 +22,6 @@ interface ApodService {
 
     companion object {
         private const val BASE_URL = "https://api.nasa.gov/"
-        const val API_KEY = "DG8RfuLFTDzZUWF8BDPlJR5PmIIGKjHVMN5Szc06"
 
         @OptIn(ExperimentalSerializationApi::class)
         fun create(): ApodService {

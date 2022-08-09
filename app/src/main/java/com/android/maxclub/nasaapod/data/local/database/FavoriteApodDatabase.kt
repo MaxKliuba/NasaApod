@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.android.maxclub.nasaapod.data.local.entity.FavoriteApodEntity
 
-@Database(entities = [FavoriteApodEntity::class], version = 1, exportSchema = false)
+@Database(entities = [FavoriteApodEntity::class], version = 1, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class FavoriteApodDatabase : RoomDatabase() {
     abstract fun favoriteApodDao(): FavoriteApodDao
