@@ -19,7 +19,7 @@
     <string name="new_item_label_description">New item</string>
     <string name="delete_item_message">Item has been removed</string>
     <string name="undo_button_title">Undo</string>
-    <string name="favorite_item_title">Remove from favorites</string>
+    <string name="delete_favorite_item_title">Remove from favorites</string>
 
     <string name="hd_item_title">HD Image</string>
     <string name="download_item_title">Save to Gallery</string>

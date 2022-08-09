@@ -132,7 +132,7 @@ class FavoriteApodFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
-            R.id.favorite -> {
+            R.id.delete_favorite -> {
                 viewModel.onEvent(FavoriteApodEvent.OnDelete)
                 true
             }
