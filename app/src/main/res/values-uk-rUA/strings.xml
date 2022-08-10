@@ -24,6 +24,10 @@
 
     <string name="hd_item_title">HD зображення</string>
     <string name="download_item_title">Зберегти до галереї</string>
+    <string name="bitmap_not_found_error_message">Нічого зберігати</string>
+    <string name="save_error_message">Помилка зберігання</string>
     <string name="successfully_saved_message">Збережено до галереї</string>
-    <string name="saving_error_message">Нічого зберігати</string>
+    <string name="permission_dialog_title">Необхідний дозвіл на зберігання</string>
+    <string name="permission_dialog_text">Будь ласка, надайте доступ до сховища, щоб зберігати зображення</string>
+    <string name="permission_settings_button_text">Дозволити у Налаштуваннях</string>
 </resources>

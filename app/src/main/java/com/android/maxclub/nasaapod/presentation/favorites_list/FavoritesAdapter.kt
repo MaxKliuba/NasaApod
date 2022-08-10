@@ -1,5 +1,6 @@
 package com.android.maxclub.nasaapod.presentation.favorites_list
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -28,6 +29,14 @@ class FavoritesAdapter(
             ),
             onClick,
         )
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun submitList(list: List<FavoriteApod>?) {
+        super.submitList(list)
+        if (list?.size == 1) {
+            notifyDataSetChanged()
+        }
+    }
 
     override fun onBindViewHolder(holder: FavoriteApodViewHolder, position: Int) =
         holder.bind(getItem(position))

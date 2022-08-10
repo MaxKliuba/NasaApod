@@ -32,7 +32,8 @@ class ImageViewerViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<ImageViewerUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
-    private var bitmap: Bitmap? = null
+    var bitmap: Bitmap? = null
+        private set
 
     fun onEvent(event: ImageViewerEvent) {
         when (event) {

@@ -1,15 +1,25 @@
 package com.android.maxclub.nasaapod.presentation.image_viewer
 
+import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,7 +29,9 @@ import com.android.maxclub.nasaapod.databinding.ActivityImageBinding
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.*
 
 class ImageViewerActivity : AppCompatActivity() {
     private val viewModel: ImageViewerViewModel by viewModels()
@@ -75,7 +87,7 @@ class ImageViewerActivity : AppCompatActivity() {
                             saveImage(uiEvent.bitmap, uiEvent.imageInfo)
                         }
                         is ImageViewerUiEvent.OnShowSaveError -> {
-                            showSaveErrorSnackbar()
+                            showBitmapNotFoundErrorSnackbar()
                         }
                     }
                 }
@@ -84,13 +96,16 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.activity_image, menu)
+        menuInflater.inflate(R.menu.activity_image_viewer, menu)
+
         viewModel.uiState.value.let { uiState ->
             menu.findItem(R.id.hd)?.apply {
                 isVisible = uiState is ImageViewerUiState.Success
                 isEnabled = uiState is ImageViewerUiState.Success && uiState.isHd
             }
         }
+        menu.findItem(R.id.save)?.isEnabled = viewModel.bitmap != null
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -142,19 +157,110 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     private fun saveImage(bitmap: Bitmap, imageInfo: ImageInfo) {
-        MediaStore.Images.Media.insertImage(
-            contentResolver,
-            bitmap,
-            "IMG_${imageInfo.date.time}",
-            imageInfo.title
-        )
+        if (hasStoragePermission()) {
+            val filename = "IMG_${imageInfo.date.time}.jpg"
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val fileOutputStream: OutputStream =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val contentValues = ContentValues().apply {
+                                put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                                put(
+                                    MediaStore.MediaColumns.RELATIVE_PATH,
+                                    Environment.DIRECTORY_PICTURES
+                                )
+                            }
+                            contentResolver.insert(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                contentValues
+                            )?.let { imageUri ->
+                                contentResolver.openOutputStream(imageUri)
+                            } ?: throw FileNotFoundException()
+                        } else {
 
-        Snackbar.make(binding.root, R.string.successfully_saved_message, Snackbar.LENGTH_SHORT)
+                            FileOutputStream(
+                                File(
+                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                                    filename,
+                                )
+                            )
+                        }
+
+                    fileOutputStream.use { outputStream ->
+                        if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)) {
+                            showSuccessfullySavedSnackbar()
+                        } else {
+                            throw FileNotFoundException()
+                        }
+                    }
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                    showSaveErrorSnackbar()
+                }
+            }
+        } else {
+            requestStoragePermission()
+        }
+    }
+
+    private fun showBitmapNotFoundErrorSnackbar() {
+        Snackbar.make(binding.root, R.string.bitmap_not_found_error_message, Snackbar.LENGTH_SHORT)
             .show()
     }
 
     private fun showSaveErrorSnackbar() {
-        Snackbar.make(binding.root, R.string.saving_error_message, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, R.string.save_error_message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun showSuccessfullySavedSnackbar() {
+        Snackbar.make(binding.root, R.string.successfully_saved_message, Snackbar.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun hasStoragePermission(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            true
+        } else {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
+    private fun requestStoragePermission() {
+        if (!hasStoragePermission()) {
+            requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+    }
+
+    private val requestStoragePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                viewModel.onEvent(ImageViewerEvent.OnSave)
+            } else {
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_permission_24)
+                        .setTitle(R.string.permission_dialog_title)
+                        .setMessage(R.string.permission_dialog_text)
+                        .setPositiveButton(R.string.permission_settings_button_text) { _, _ ->
+                            launchPermissionSettings()
+                        }
+                        .create()
+                        .show()
+                }
+            }
+        }
+
+    private fun launchPermissionSettings() {
+        Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            data = Uri.fromParts("package", packageName, null)
+        }.also { intent ->
+            startActivity(intent)
+        }
     }
 
     companion object {

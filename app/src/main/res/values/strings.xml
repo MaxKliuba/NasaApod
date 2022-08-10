@@ -23,6 +23,10 @@
 
     <string name="hd_item_title">HD Image</string>
     <string name="download_item_title">Save to Gallery</string>
+    <string name="bitmap_not_found_error_message">Nothing to save</string>
+    <string name="save_error_message">Failed to save</string>
     <string name="successfully_saved_message">Saved to Gallery</string>
-    <string name="saving_error_message">Nothing to save</string>
+    <string name="permission_dialog_title">Required Storage Permission</string>
+    <string name="permission_dialog_text">Please allow access to storage to save images</string>
+    <string name="permission_settings_button_text">Allow in Settings</string>
 </resources>

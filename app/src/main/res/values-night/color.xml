@@ -8,7 +8,11 @@
     <color name="color_status_bar">@color/darkgray</color>
     <color name="color_background">@color/black</color>
     <color name="color_on_background">@color/white</color>
-    <color name="color_snackbar_button">@color/blue</color>
+    <color name="color_surface">@color/gray</color>
+    <color name="color_on_surface">@color/white</color>
+    <color name="color_snackbar">@color/gray</color>
+    <color name="color_on_snackbar">@color/white</color>
+    <color name="color_snackbar_button">@color/lightblue</color>
     <color name="color_disabled">#727272</color>
     <color name="color_new_item_label">#CC6977</color>
 </resources>
