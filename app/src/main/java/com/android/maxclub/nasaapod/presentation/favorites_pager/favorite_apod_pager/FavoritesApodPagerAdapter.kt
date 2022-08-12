@@ -46,7 +46,6 @@ class FavoritesApodPagerAdapter(
             }
 
             override fun onChanged(position: Int, count: Int, payload: Any?) {
-                notifyItemRangeChanged(position, count, payload)
             }
         })
     }

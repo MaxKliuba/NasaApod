@@ -7,6 +7,8 @@ import com.android.maxclub.nasaapod.domain.model.FavoriteApod
 import com.android.maxclub.nasaapod.domain.usecase.ApodUseCases
 import com.android.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_pager.FavoritesViewPagerFragment.Companion.ARG_FAVORITE_APOD
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,7 +72,7 @@ class FavoritesViewModel @Inject constructor(
                 }
             }
             is FavoritesEvent.OnItemRestore -> {
-                viewModelScope.launch {
+                CoroutineScope(Dispatchers.Main).launch {
                     apodUseCases.addFavoriteApod(event.favoriteApod)
                     restoredItem = event.favoriteApod
                 }

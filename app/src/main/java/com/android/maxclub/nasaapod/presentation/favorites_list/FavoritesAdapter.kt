@@ -11,6 +11,7 @@ import com.android.maxclub.nasaapod.R
 import com.android.maxclub.nasaapod.domain.model.MediaType
 import com.android.maxclub.nasaapod.databinding.ListItemFavoriteApodBinding
 import com.android.maxclub.nasaapod.domain.model.FavoriteApod
+import com.android.maxclub.nasaapod.presentation.favorites_list.FavoritesDiffCallback.Companion.POSITION_CHANGE_PAYLOAD
 import com.android.maxclub.nasaapod.util.formatDate
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -46,7 +47,7 @@ class FavoritesAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        if (payloads.isNotEmpty() && payloads[0] == true) {
+        if (payloads.isNotEmpty() && payloads.first() == POSITION_CHANGE_PAYLOAD) {
             holder.bindData(getItem(position))
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -114,5 +115,9 @@ class FavoritesDiffCallback : DiffUtil.ItemCallback<FavoriteApod>() {
         oldItem == newItem
 
     override fun getChangePayload(oldItem: FavoriteApod, newItem: FavoriteApod): Any? =
-        if (oldItem.position != newItem.position) true else null
+        if (oldItem.position != newItem.position) POSITION_CHANGE_PAYLOAD else null
+
+    companion object {
+        const val POSITION_CHANGE_PAYLOAD = 0
+    }
 }

@@ -28,7 +28,7 @@ class FavoriteApodViewModel @Inject constructor(
 
     private var fetchJob: Job? = null
 
-    private val favoriteApod: FavoriteApod = savedStateHandle[ARG_FAVORITE_APOD]!!
+    private var favoriteApod: FavoriteApod = savedStateHandle[ARG_FAVORITE_APOD]!!
     val currentApod: Apod
         get() = (uiState.value as? FavoriteApodUiState.Success)?.apod
             ?: uiState.value.cachedApod
@@ -44,7 +44,8 @@ class FavoriteApodViewModel @Inject constructor(
             is FavoriteApodEvent.OnShowData -> {
                 viewModelScope.launch {
                     if (favoriteApod.isNew) {
-                        apodUseCases.updateFavoriteApods(favoriteApod.copy(isNew = false))
+                        favoriteApod = favoriteApod.copy(isNew = false)
+                        apodUseCases.updateFavoriteApods(favoriteApod)
                     }
                 }
             }

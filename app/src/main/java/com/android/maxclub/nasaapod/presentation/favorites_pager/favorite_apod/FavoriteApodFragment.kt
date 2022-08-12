@@ -118,6 +118,11 @@ class FavoriteApodFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onEvent(FavoriteApodEvent.OnShowData)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -148,7 +153,6 @@ class FavoriteApodFragment : Fragment() {
     }
 
     private fun showData(apod: Apod) {
-        viewModel.onEvent(FavoriteApodEvent.OnShowData(apod))
         binding.apply {
             progressIndicator.isVisible = false
             when (apod.mediaType) {
