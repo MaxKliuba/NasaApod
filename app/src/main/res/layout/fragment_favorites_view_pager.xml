@@ -4,4 +4,4 @@
     android:id="@+id/view_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.favorites_pager.favorite_apod_pager.FavoritesViewPagerFragment" />
+    tools:context="com.tech.maxclub.nasaapod.presentation.favorites_pager.favorite_apod_pager.FavoritesViewPagerFragment" />
